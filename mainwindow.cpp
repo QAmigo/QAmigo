@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "serialsendbox.h"
 #include "decoder.h"
+#include "tabadvanced.h"
 
 #include <QMessageBox>
 #include <QtSerialPort/QSerialPortInfo>
@@ -165,11 +166,13 @@ void MainWindow::openSerial()
 
             Decoder *decoder = new Decoder(this, port);
 
-            tabCOMSimple = new TabCOMSimple(this, port);
+            TabCOMSimple *tabCOMSimple = new TabCOMSimple(this, port);
             ui->tabMain->addTab(tabCOMSimple, "Simple");
             connect(tabCOMSimple, &TabCOMSimple::errorMessage, this, &MainWindow::errorMessage);
-
             connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
+
+            TabAdvanced *tabAdvanced = new TabAdvanced(this);
+            ui->tabMain->addTab(tabAdvanced, "Advanced");
         }
     }
 }

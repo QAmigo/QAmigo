@@ -2,20 +2,20 @@
 
 Decoder::Decoder(QObject *object, QIODevice *connection) :
     QObject(object),
-    typeList(nullptr),
     connection(connection),
-    frameLength(0)
+    frameLength(0),
+    listType(nullptr)
 {
     connect(connection, &QIODevice::readyRead, this, &Decoder::dataReady);
 }
 
 Decoder::Decoder(QObject *object, QIODevice *connection,
                  const QByteArray *header,
-                 const QList<VarType> *typeList):
+                 const QListWidget *listType):
     QObject (object),
-    typeList(typeList),
     connection(connection),
-    frameLength(0)
+    frameLength(0),
+    listType(listType)
 {
     if (header != nullptr) {
         frameHeader = header->mid(0, 2);
@@ -23,9 +23,9 @@ Decoder::Decoder(QObject *object, QIODevice *connection,
     }
     frameHeader = nullptr;
 
-    for (VarType type : *typeList) {
-        frameLength += type.size;
-    }
+//    for (VarType type : *typeList) {
+//        frameLength += type.size;
+//    }
 }
 
 void Decoder::dataReady()
@@ -33,7 +33,7 @@ void Decoder::dataReady()
     QByteArray array = connection->readAll();
     buffer.append(array);
     emit rawDataReady(array);
-    if (typeList != nullptr)
+    if (listType != nullptr)
         decode_buffer();
 }
 

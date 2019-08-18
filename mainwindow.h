@@ -28,7 +28,6 @@ private:
     Ui::MainWindow *ui;
     SerialSendBox *sendBox;
     QSerialPort *port;
-    TabCOMSimple *tabCOMSimple;
 };
 
 #endif // MAINWINDOW_H

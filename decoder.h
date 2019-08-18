@@ -4,8 +4,9 @@
 #include <QByteArray>
 #include <QThread>
 #include <QIODevice>
+#include <QListWidget>
 
-#include "vartype.h"
+#include "vartypeitem.h"
 
 class Decoder : public QObject
 {
@@ -15,13 +16,14 @@ public:
     Decoder(QObject *object, QIODevice *connection);
     Decoder(QObject *object, QIODevice *connection,
             const QByteArray *header,
-            const QList<VarType> *typeList);
+            const QListWidget *listType);
 
 private:
     QByteArray buffer;
     QByteArray frameHeader;
-    const QList<VarType> *typeList;
     QIODevice *connection;
+    uint16_t frameLength;
+    const QListWidget *listType;
 
 signals:
     void frameReady(QByteArray array);		//Sends one ready frame out.
@@ -32,9 +34,6 @@ private slots:
 
 private:
     void decode_buffer();
-
-private:
-    uint16_t frameLength;
 };
 
 #endif // DECODERTHREAD_H

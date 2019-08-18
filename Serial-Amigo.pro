@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui serialport
+QT       += core gui serialport charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -29,14 +29,17 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
         serialsendbox.cpp \
-        tabcomsimple.cpp
+        tabadvanced.cpp \
+        tabcomsimple.cpp \
+        vartypeitem.cpp
 
 HEADERS += \
         decoder.h \
         mainwindow.h \
         serialsendbox.h \
+        tabadvanced.h \
         tabcomsimple.h \
-        vartype.h
+        vartypeitem.h
 
 FORMS += \
         mainwindow.ui
