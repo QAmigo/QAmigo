@@ -1,14 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "serialsendbox.h"
-#include "tabcomsimple.h"
+#include "decoderthread.h"
 
 #include <QMessageBox>
 #include <QtSerialPort/QSerialPortInfo>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    port(new QSerialPort())
 {
     ui->setupUi(this);
 
@@ -52,6 +53,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    if (port->isOpen())
+        port->close();
     delete ui;
 }
 
@@ -63,7 +66,7 @@ void MainWindow::errorMessage(QString str)
 void MainWindow::openSerial()
 {
     if (ui->comboPorts->count() != 0) {
-        if (port->isOpen()) {
+        if (port != nullptr && port->isOpen()) {
             port->close();
             ui->buttonOpen->setText("Open");
         } else {
@@ -147,12 +150,18 @@ void MainWindow::openSerial()
             }
             port->setFlowControl(flowControl);
 
-            if (port->open(QIODevice::ReadWrite)) {
+            if (!port->open(QIODevice::ReadWrite)) {
                 QMessageBox::warning(this, "Serial open Failed.", "Port open Failed.");
+                return;
             }
             ui->buttonOpen->setText("Close");
 
-            ui->tabMain->addTab(new TabCOMSimple(this, port), "Simple");
+            tabCOMSimple = new TabCOMSimple(this, port);
+            ui->tabMain->addTab(tabCOMSimple, "Simple");
+            DecoderThread *decoderThread = new DecoderThread(this, port);
+            decoderThread->start();
+
+            connect(decoderThread, &DecoderThread::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
         }
     }
 }

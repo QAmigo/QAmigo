@@ -10,7 +10,7 @@ SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(paren
     boxSend(new QPlainTextEdit(this)),
     port(port)
 {
-    radioHex->setEnabled(true);
+    radioASC->setChecked(true);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(boxSend);
@@ -28,7 +28,7 @@ SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(paren
 void SerialSendBox::on_buttonSend_clicked()
 {
     if (port->isOpen()) {
-        if (radioASC->isEnabled()) {
+        if (radioASC->isChecked()) {
             port->write(boxSend->toPlainText().toUtf8());
         } else {
             //Write them as hex.

@@ -25,19 +25,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        connection.cpp \
         decoderthread.cpp \
         main.cpp \
         mainwindow.cpp \
-        serialconnection.cpp \
         serialsendbox.cpp \
         tabcomsimple.cpp
 
 HEADERS += \
-        connection.h \
         decoderthread.h \
         mainwindow.h \
-        serialconnection.h \
         serialsendbox.h \
         tabcomsimple.h \
         vartype.h

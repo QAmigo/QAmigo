@@ -3,16 +3,17 @@
 
 #include <QByteArray>
 #include <QThread>
+#include <QIODevice>
 
-#include "connection.h"
 #include "vartype.h"
 
-class DecoderThread : QThread
+class DecoderThread : public QThread
 {
     Q_OBJECT
 
 public:
-    DecoderThread(Connection *connection,
+    DecoderThread(QObject *object, QIODevice *connection);
+    DecoderThread(QObject *object, QIODevice *connection,
             const QByteArray *header,
             const QList<VarType> *typeList);
 
@@ -20,14 +21,14 @@ private:
     QByteArray buffer;
     QByteArray frameHeader;
     const QList<VarType> *typeList;
-    Connection *connection;
+    QIODevice *connection;
 
 signals:
     void frameReady(QByteArray array);		//Sends one ready frame out.
     void rawDataReady(QByteArray array);	//Sends what it recives.
 
     // QThread interface
-protected:
+public:
     void run();
 
 private:

@@ -16,6 +16,8 @@ public:
 signals:
 
 public slots:
+    void rawDataReady(QByteArray array);
+
 private:
     QPlainTextEdit *boxReceive;
     QRadioButton *radioReceiveHex;

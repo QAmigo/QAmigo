@@ -3,8 +3,10 @@
 
 #include <QMainWindow>
 #include <QSerialPort>
+#include <QWidget>
 
 #include "serialsendbox.h"
+#include "tabcomsimple.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,6 +28,7 @@ private:
     Ui::MainWindow *ui;
     SerialSendBox *sendBox;
     QSerialPort *port;
+    TabCOMSimple *tabCOMSimple;
 };
 
 #endif // MAINWINDOW_H
