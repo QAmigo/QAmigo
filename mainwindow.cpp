@@ -81,7 +81,7 @@ void MainWindow::openSerial()
             }
 
             QSerialPort::DataBits dataBits = QSerialPort::Data8;
-            switch(ui->comboDataBits->itemData(ui->comboDataBits->currentIndex()).toInt()) {
+            switch(ui->comboDataBits->currentData().toInt()) {
             case 5:
                 dataBits = QSerialPort::Data5;
                 break;
@@ -101,7 +101,7 @@ void MainWindow::openSerial()
             port->setDataBits(dataBits);
 
             QSerialPort::Parity parity = QSerialPort::NoParity;
-            switch (ui->comboParity->itemData(ui->comboParity->currentIndex()).toInt()) {
+            switch (ui->comboParity->currentData().toInt()) {
             case 0:
                 parity = QSerialPort::NoParity;
                 break;
@@ -124,7 +124,7 @@ void MainWindow::openSerial()
             port->setParity(parity);
 
             QSerialPort::StopBits stopBits = QSerialPort::OneStop;
-            switch (ui->comboStopBits->itemData(ui->comboStopBits->currentIndex()).toInt()) {
+            switch (ui->comboStopBits->currentData().toInt()) {
             case 1:
                 stopBits = QSerialPort::OneStop;
                 break;
@@ -141,7 +141,7 @@ void MainWindow::openSerial()
             port->setStopBits(stopBits);
 
             QSerialPort::FlowControl flowControl = QSerialPort::NoFlowControl;
-            switch (ui->comboFlowControl->itemData(ui->comboFlowControl->currentIndex()).toInt()) {
+            switch (ui->comboFlowControl->currentData().toInt()) {
             case 0:
                 flowControl = QSerialPort::NoFlowControl;
                 break;
