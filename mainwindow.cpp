@@ -18,11 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->comboPorts->addItem(info.portName());
 
 
-    ui->comboBaudrate->addItem("1200", 1200);
-    ui->comboBaudrate->addItem("2400", 2400);
-    ui->comboBaudrate->addItem("4800", 4800);
-    ui->comboBaudrate->addItem("9600", 9600);
-    ui->comboBaudrate->addItem("115200", 115200);
+    ui->comboBaudrate->addItem("1200");
+    ui->comboBaudrate->addItem("2400");
+    ui->comboBaudrate->addItem("4800");
+    ui->comboBaudrate->addItem("9600");
+    ui->comboBaudrate->addItem("115200");
     ui->comboBaudrate->setCurrentIndex(3);
 
     ui->comboDataBits->addItem("5", 5);
@@ -81,7 +81,7 @@ void MainWindow::openSerial()
             }
 
             QSerialPort::DataBits dataBits = QSerialPort::Data8;
-            switch(ui->comboDataBits->itemData(ui->comboDataBits->currentIndex()).Int) {
+            switch(ui->comboDataBits->itemData(ui->comboDataBits->currentIndex()).toInt()) {
             case 5:
                 dataBits = QSerialPort::Data5;
                 break;
@@ -101,7 +101,7 @@ void MainWindow::openSerial()
             port->setDataBits(dataBits);
 
             QSerialPort::Parity parity = QSerialPort::NoParity;
-            switch (ui->comboParity->itemData(ui->comboParity->currentIndex()).Int) {
+            switch (ui->comboParity->itemData(ui->comboParity->currentIndex()).toInt()) {
             case 0:
                 parity = QSerialPort::NoParity;
                 break;
@@ -124,7 +124,7 @@ void MainWindow::openSerial()
             port->setParity(parity);
 
             QSerialPort::StopBits stopBits = QSerialPort::OneStop;
-            switch (ui->comboStopBits->itemData(ui->comboStopBits->currentIndex()).Int) {
+            switch (ui->comboStopBits->itemData(ui->comboStopBits->currentIndex()).toInt()) {
             case 1:
                 stopBits = QSerialPort::OneStop;
                 break;
@@ -141,7 +141,7 @@ void MainWindow::openSerial()
             port->setStopBits(stopBits);
 
             QSerialPort::FlowControl flowControl = QSerialPort::NoFlowControl;
-            switch (ui->comboFlowControl->itemData(ui->comboFlowControl->currentIndex()).Int) {
+            switch (ui->comboFlowControl->itemData(ui->comboFlowControl->currentIndex()).toInt()) {
             case 0:
                 flowControl = QSerialPort::NoFlowControl;
                 break;
