@@ -7,6 +7,7 @@
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QGroupBox>
 #include <QSerialPort>
+#include <array>
 
 class SerialSendBox : public QWidget
 {
@@ -15,14 +16,15 @@ public:
     explicit SerialSendBox(QWidget *parent = nullptr, QSerialPort *port = nullptr);
 
 signals:
+    void errorSend(QString string);
 
-public slots:
-
-    // QWidget interface
-protected:
+private:
+    char parseHex(QByteArray *array);
+    int8_t toHex(char data);
 
 private slots:
     void on_buttonSend_clicked();
+    void onCheckBoxChanged();
 
 private:
     QPushButton *buttonSend;

@@ -27,8 +27,13 @@ TabCOMSimple::TabCOMSimple(QWidget *parent,
     layoutReceiveControls->addWidget(radioReceiveHex);
     layoutReceiveControls->addWidget(buttonReceiveClear);
 
-    for (int i = 0; i < 5; i++)
-        layoutSend->addWidget(new SerialSendBox(this, port));
+    for (int i = 0; i < 5; i++) {
+        SerialSendBox *box = new SerialSendBox(this, port);
+        layoutSend->addWidget(box);
+        connect(box, &SerialSendBox::errorSend, this, &TabCOMSimple::sendError);
+    }
+
+    connect(buttonReceiveClear, &QPushButton::clicked, this, &TabCOMSimple::onButtonReceiveClearClicked);
 }
 
 void TabCOMSimple::rawDataReady(QByteArray array)
@@ -37,6 +42,23 @@ void TabCOMSimple::rawDataReady(QByteArray array)
     if (radioReceiveASC->isChecked())
         boxReceive->insertPlainText(array);
     else {
-//        boxReceive
+        uint16_t count = 0;
+        for (char data : array.toHex()) {
+            if (count % 2 == 1)
+                boxReceive->insertPlainText(QString().sprintf("%c ", data));
+            else
+                boxReceive->insertPlainText(QString().sprintf("%c", data));
+            count++;
+        }
     }
+}
+
+void TabCOMSimple::onButtonReceiveClearClicked()
+{
+    boxReceive->setPlainText("");
+}
+
+void TabCOMSimple::sendError(QString string)
+{
+    emit errorMessage(string);
 }

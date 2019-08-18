@@ -167,6 +167,7 @@ void MainWindow::openSerial()
 
             tabCOMSimple = new TabCOMSimple(this, port);
             ui->tabMain->addTab(tabCOMSimple, "Simple");
+            connect(tabCOMSimple, &TabCOMSimple::errorMessage, this, &MainWindow::errorMessage);
 
             connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
         }

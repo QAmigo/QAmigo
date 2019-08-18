@@ -15,9 +15,14 @@ public:
                           QSerialPort *port = nullptr);
 
 signals:
+    void errorMessage(QString string);
 
 public slots:
     void rawDataReady(QByteArray array);
+
+private slots:
+    void onButtonReceiveClearClicked();
+    void sendError(QString string);
 
 private:
     QPlainTextEdit *boxReceive;
