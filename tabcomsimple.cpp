@@ -3,7 +3,8 @@
 #include <QVBoxLayout>
 #include <serialsendbox.h>
 
-TabCOMSimple::TabCOMSimple(QWidget *parent, QSerialPort *port) : QWidget(parent),
+TabCOMSimple::TabCOMSimple(QWidget *parent,
+                           QSerialPort *port) : QWidget(parent),
     boxReceive(new QPlainTextEdit()),
     radioReceiveHex(new QRadioButton("Hex")),
     radioReceiveASC(new QRadioButton("ASC")),

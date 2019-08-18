@@ -1,18 +1,18 @@
-#include "decoderthread.h"
+#include "decoder.h"
 
-DecoderThread::DecoderThread(QObject *object, QIODevice *connection) :
-    QThread(object),
+Decoder::Decoder(QObject *object, QIODevice *connection) :
+    QObject(object),
     typeList(nullptr),
     connection(connection),
     frameLength(0)
 {
-
+    connect(connection, &QIODevice::readyRead, this, &Decoder::dataReady);
 }
 
-DecoderThread::DecoderThread(QObject *object, QIODevice *connection,
+Decoder::Decoder(QObject *object, QIODevice *connection,
                  const QByteArray *header,
                  const QList<VarType> *typeList):
-    QThread (object),
+    QObject (object),
     typeList(typeList),
     connection(connection),
     frameLength(0)
@@ -28,21 +28,16 @@ DecoderThread::DecoderThread(QObject *object, QIODevice *connection,
     }
 }
 
-void DecoderThread::run()
+void Decoder::dataReady()
 {
-    while (connection->isOpen()) {
-        if (connection->waitForReadyRead(1000)) {
-            QByteArray array = connection->readAll();
-
-            buffer.append(array);
-            emit rawDataReady(array);
-            if (typeList != nullptr)
-                decode_buffer();
-        }
-    }
+    QByteArray array = connection->readAll();
+    buffer.append(array);
+    emit rawDataReady(array);
+    if (typeList != nullptr)
+        decode_buffer();
 }
 
-void DecoderThread::decode_buffer()
+void Decoder::decode_buffer()
 {
     if (buffer.size() >= frameLength) {
         emit frameReady(buffer.left(frameLength));

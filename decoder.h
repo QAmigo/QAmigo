@@ -7,13 +7,13 @@
 
 #include "vartype.h"
 
-class DecoderThread : public QThread
+class Decoder : public QObject
 {
     Q_OBJECT
 
 public:
-    DecoderThread(QObject *object, QIODevice *connection);
-    DecoderThread(QObject *object, QIODevice *connection,
+    Decoder(QObject *object, QIODevice *connection);
+    Decoder(QObject *object, QIODevice *connection,
             const QByteArray *header,
             const QList<VarType> *typeList);
 
@@ -27,9 +27,8 @@ signals:
     void frameReady(QByteArray array);		//Sends one ready frame out.
     void rawDataReady(QByteArray array);	//Sends what it recives.
 
-    // QThread interface
-public:
-    void run();
+private slots:
+    void dataReady();
 
 private:
     void decode_buffer();

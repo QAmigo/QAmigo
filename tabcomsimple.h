@@ -11,7 +11,8 @@ class TabCOMSimple : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TabCOMSimple(QWidget *parent = nullptr, QSerialPort *port = nullptr);
+    explicit TabCOMSimple(QWidget *parent = nullptr,
+                          QSerialPort *port = nullptr);
 
 signals:
 

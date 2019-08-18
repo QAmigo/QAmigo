@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="tabMain">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabConnection">
        <attribute name="title">
@@ -123,26 +123,6 @@
          <string>Open</string>
         </property>
        </widget>
-      </widget>
-      <widget class="QWidget" name="tabSimple">
-       <attribute name="title">
-        <string>Simple</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <layout class="QVBoxLayout" name="verticalCOMReceiveBoxes">
-          <item>
-           <widget class="QPlainTextEdit" name="plainTextEdit"/>
-          </item>
-          <item>
-           <widget class="QPlainTextEdit" name="plainTextEdit_2"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalCOMSendBoxes"/>
-        </item>
-       </layout>
       </widget>
      </widget>
     </item>

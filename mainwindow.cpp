@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "serialsendbox.h"
-#include "decoderthread.h"
+#include "decoder.h"
 
 #include <QMessageBox>
 #include <QtSerialPort/QSerialPortInfo>
@@ -163,12 +163,12 @@ void MainWindow::openSerial()
             }
             ui->buttonOpen->setText("Close");
 
+            Decoder *decoder = new Decoder(this, port);
+
             tabCOMSimple = new TabCOMSimple(this, port);
             ui->tabMain->addTab(tabCOMSimple, "Simple");
-            DecoderThread *decoderThread = new DecoderThread(this, port);
-            decoderThread->start();
 
-            connect(decoderThread, &DecoderThread::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
+            connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
         }
     }
 }
