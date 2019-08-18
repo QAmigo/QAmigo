@@ -71,7 +71,14 @@ void MainWindow::openSerial()
             ui->buttonOpen->setText("Open");
         } else {
             port->setPortName(ui->comboPorts->currentText());
-            port->setBaudRate(ui->comboBaudrate->itemData(ui->comboBaudrate->currentIndex()).Int);
+            bool ok;
+            qint32 baudrate = ui->comboBaudrate->currentText().toInt(&ok);
+            if (ok)
+                port->setBaudRate(baudrate);
+            else {
+                QMessageBox::warning(this, "Error", "Baudrate parse failed.");
+                return;
+            }
 
             QSerialPort::DataBits dataBits = QSerialPort::Data8;
             switch(ui->comboDataBits->itemData(ui->comboDataBits->currentIndex()).Int) {
