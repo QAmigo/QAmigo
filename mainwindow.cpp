@@ -66,7 +66,7 @@ void MainWindow::errorMessage(QString str)
 
 void MainWindow::openSerial()
 {
-    if (ui->comboPorts->count() != 0) {
+    if (ui->comboPorts->currentText() != "") {
         if (port->isOpen()) {
             port->close();
             ui->buttonOpen->setText("Open");
