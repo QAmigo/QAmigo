@@ -8,6 +8,7 @@
 #include "serialsendbox.h"
 #include "tabcomsimple.h"
 #include "tabadvanced.h"
+#include "decoder.h"
 
 namespace Ui {
 class MainWindow;
@@ -31,6 +32,7 @@ private:
     QSerialPort *port;
     TabCOMSimple *tabCOMSimple;
     TabAdvanced *tabAdvanced;
+    Decoder *decoder;
 };
 
 #endif // MAINWINDOW_H

@@ -6,6 +6,9 @@
 #include <QVBoxLayout>
 #include <QSpacerItem>
 
+#include <sstream>
+#include <iostream>
+
 TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     buttonEnable(new QPushButton("Enable")),
     labelHeader(new QLabel("Frame Header")),
@@ -14,6 +17,9 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     comboType(new QComboBox()),
     listProtocal(new QListWidget()),
     checkCRC(new QCheckBox()),
+    groupEndianess(new QGroupBox("Endianess")),
+    radioLittle(new QRadioButton("Little")),
+    radioBig(new QRadioButton("Big")),
     buttonAdd(new QPushButton("Add")),
     buttonDelete(new QPushButton("Delete")),
     buttonUp(new QPushButton("Up")),
@@ -21,7 +27,9 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     boxLog(new QPlainTextEdit()),
     buttonClearLog(new QPushButton("Clear")),
     graph(new QGraphicsView()),
-    buttonClearGraph(new QPushButton("Clear"))
+    buttonClearGraph(new QPushButton("Clear")),
+    enabled(false),
+    endianess(LITTLE)
 {
     QGridLayout *layoutMain = new QGridLayout();
     setLayout(layoutMain);
@@ -42,8 +50,6 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     comboType->addItem("I16", VAR_TYPE::I16);
     comboType->addItem("U32", VAR_TYPE::U32);
     comboType->addItem("I32", VAR_TYPE::I32);
-    comboType->addItem("U64", VAR_TYPE::U64);
-    comboType->addItem("I64", VAR_TYPE::I64);
     comboType->addItem("float", VAR_TYPE::FLOAT);
     comboType->addItem("double", VAR_TYPE::DOUBLE);
 
@@ -55,6 +61,14 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     layoutListControls->addWidget(boxHeader);
     layoutListControls->addWidget(labelType);
     layoutListControls->addWidget(comboType);
+    layoutListControls->addWidget(groupEndianess);
+    QVBoxLayout *layoutEndianess = new QVBoxLayout();
+    groupEndianess->setLayout(layoutEndianess);
+    layoutEndianess->addWidget(radioBig);
+    layoutEndianess->addWidget(radioLittle);
+    radioBig->setChecked(true);
+    connect(radioLittle, &QRadioButton::clicked, this, &TabAdvanced::onRadioLittleBigClicked);
+    connect(radioBig, &QRadioButton::clicked, this, &TabAdvanced::onRadioLittleBigClicked);
     layoutListControls->addWidget(buttonAdd);
     layoutListControls->addWidget(buttonDelete);
     layoutListControls->addWidget(buttonUp);
@@ -65,6 +79,7 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     connect(buttonDelete, &QPushButton::clicked, this, &TabAdvanced::onButtonDeleteClicked);
     connect(buttonUp, &QPushButton::clicked, this, &TabAdvanced::onButtonUpClicked);
     connect(buttonDown, &QPushButton::clicked, this, &TabAdvanced::onButtonDownClicked);
+    connect(buttonEnable, &QPushButton::clicked, this, &TabAdvanced::onButtonEnableClicked);
 
     layoutList->setStretchFactor(listProtocal, 4);
     layoutList->setStretchFactor(layoutListControls, 1);
@@ -78,6 +93,22 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     QHBoxLayout *layoutGraphControls = new QHBoxLayout();
     layoutGraph->addLayout(layoutGraphControls);
     layoutGraphControls->addWidget(buttonClearGraph);
+}
+
+void TabAdvanced::frameDataReady(QByteArray array)
+{
+    QString bufferShow;
+    if (enabled) {
+        int count = 0;
+        for (int i = 0; i < listProtocal->count(); i++) {
+            VarTypeItem *item = static_cast<VarTypeItem *>(listProtocal->item(i));
+            item->setBufferValue(array.mid(count, item->getSize()));
+            count += item->getSize();
+            bufferShow.append(QString().sprintf("%4.2lf ", item->getDouble(endianess)));
+        }
+        if (bufferShow.count() != 0)
+            boxLog->appendPlainText(bufferShow);
+    }
 }
 
 void TabAdvanced::onButtonAddClicked()
@@ -106,4 +137,32 @@ void TabAdvanced::onButtonDownClicked()
         listProtocal->insertItem(currentRow + 1, listProtocal->takeItem(currentRow));
         listProtocal->setCurrentRow(currentRow + 1);
     }
+}
+
+void TabAdvanced::onButtonEnableClicked()
+{
+    if (enabled == false) {
+        buttonEnable->setText("Disable");
+        enabled = true;
+
+        std::stringstream ss;
+        uint16_t x;
+        QByteArray header;
+        ss << std::hex << boxHeader->text().toUtf8().constData();
+        ss >> x;
+        header.append(static_cast<char>(x >> 8));
+        header.append(static_cast<char>(x));
+        emit sendDecodeParameters(header, *listProtocal);
+    } else {
+        buttonEnable->setText("Enable");
+        enabled = false;
+    }
+}
+
+void TabAdvanced::onRadioLittleBigClicked()
+{
+    if (radioLittle->isChecked())
+        endianess = LITTLE;
+    else
+        endianess = BIG;
 }

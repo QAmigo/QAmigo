@@ -1,31 +1,35 @@
 #include "decoder.h"
 
-Decoder::Decoder(QObject *object, QIODevice *connection) :
+Decoder::Decoder(QObject *object) :
     QObject(object),
-    connection(connection),
     frameLength(0),
-    listType(nullptr)
+    listType(new QList<VAR_TYPE>())
 {
-    connect(connection, &QIODevice::readyRead, this, &Decoder::dataReady);
 }
 
-Decoder::Decoder(QObject *object, QIODevice *connection,
-                 const QByteArray *header,
-                 const QListWidget *listType):
-    QObject (object),
-    connection(connection),
-    frameLength(0),
-    listType(listType)
+void Decoder::setConnection(QIODevice *connection)
 {
-    if (header != nullptr) {
-        frameHeader = header->mid(0, 2);
-        frameLength += 2;
-    }
-    frameHeader = nullptr;
+    connect(connection, &QIODevice::readyRead, this, &Decoder::dataReady);
+    this->connection = connection;
+}
 
-//    for (VarType type : *typeList) {
-//        frameLength += type.size;
-//    }
+void Decoder::setDecodeParameters(const QByteArray header, const QListWidget &types)
+{
+    frameLength = 0;
+    if (header.size() == 1 || header.size() == 2) {
+        frameHeader = header;
+        frameLength += header.size();
+    }
+    //Raise error.
+
+    listType->clear();
+    for (int i = 0; i < types.count(); i++) {
+        QListWidgetItem *item = types.item(i);
+        VarTypeItem *varType = static_cast<VarTypeItem *>(item);
+
+        listType->append(varType->type);
+        frameLength += varType->getSize();
+    }
 }
 
 void Decoder::dataReady()
@@ -33,14 +37,23 @@ void Decoder::dataReady()
     QByteArray array = connection->readAll();
     buffer.append(array);
     emit rawDataReady(array);
-    if (listType != nullptr)
+    if (listType->count() != 0)
         decode_buffer();
 }
 
 void Decoder::decode_buffer()
 {
-    if (buffer.size() >= frameLength) {
-        emit frameReady(buffer.left(frameLength));
-        buffer = buffer.remove(0, frameLength);
+    while (buffer.size() >= frameLength) {
+        int index = buffer.indexOf(frameHeader);
+        if (index != -1) {
+            if (index != 0)
+                buffer.remove(0, index);
+            if (buffer.size() >= frameLength) {
+                emit frameReady(buffer.mid(frameHeader.size(), frameLength - frameHeader.size()));
+                buffer.remove(0, frameLength);
+            } else
+                break;
+        } else
+            break;
     }
 }

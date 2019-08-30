@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "serialsendbox.h"
-#include "decoder.h"
 
 #include <QMessageBox>
 #include <QtSerialPort/QSerialPortInfo>
@@ -9,7 +8,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    port(new QSerialPort())
+    port(new QSerialPort()),
+    decoder(new Decoder(this))
 {
     ui->setupUi(this);
 
@@ -55,6 +55,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tabMain->addTab(tabAdvanced, "Advanced");
 
     connect(ui->buttonOpen, &QPushButton::clicked, this, &MainWindow::openSerial);
+
+    connect(tabCOMSimple, &TabCOMSimple::errorMessage, this, &MainWindow::errorMessage);
+    connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
+    connect(decoder, &Decoder::frameReady, tabAdvanced, &TabAdvanced::frameDataReady);
+    connect(tabAdvanced, &TabAdvanced::sendDecodeParameters, decoder, &Decoder::setDecodeParameters);
+
 }
 
 MainWindow::~MainWindow()
@@ -169,10 +175,7 @@ void MainWindow::openSerial()
             }
             ui->buttonOpen->setText("Close");
 
-            Decoder *decoder = new Decoder(this, port);
-
-            connect(tabCOMSimple, &TabCOMSimple::errorMessage, this, &MainWindow::errorMessage);
-            connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
+            decoder->setConnection(port);
         }
     }
 }

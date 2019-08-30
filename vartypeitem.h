@@ -1,6 +1,7 @@
 #ifndef VARTYPE_H
 #define VARTYPE_H
 
+#include <QByteArray>
 #include <QString>
 #include <QListWidgetItem>
 
@@ -11,11 +12,14 @@ typedef enum {
     I16,
     U32,
     I32,
-    U64,
-    I64,
     FLOAT,
     DOUBLE,
 } VAR_TYPE;
+
+typedef enum {
+    BIG,
+    LITTLE,
+} ENDIANESS;
 
 class VarTypeItem : public QListWidgetItem
 {
@@ -24,6 +28,18 @@ public:
 
 public:
     VAR_TYPE type;
+
+public:
+    int getSize();
+    double getDouble(ENDIANESS endianess);
+    void setBufferValue(const QByteArray &bufferValue);
+
+private:
+    void fillValue(uint8_t *p, int byteCount, ENDIANESS endianess);
+
+private:
+    QByteArray bufferValue;
+    double value;
 };
 
 #endif // VARTYPE_H

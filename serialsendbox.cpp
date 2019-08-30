@@ -69,7 +69,7 @@ char SerialSendBox::parseHex(QByteArray *array)
         }
     }
 
-    return -1;
+    return 0;
 }
 
 void SerialSendBox::on_buttonSend_clicked()
@@ -84,12 +84,7 @@ void SerialSendBox::on_buttonSend_clicked()
             QByteArray *bufferInput = new QByteArray(boxSend->toPlainText().remove(' ').toLower().toUtf8());
             while (bufferInput->size() != 0) {
                 char hex = parseHex(bufferInput);
-                if (hex >= 0) {
-                    bufferSend.append(hex);
-                } else {
-                    emit errorSend("Inputs are not hex format numbers. Remember they have to presented in pairs.");
-                    return;
-                }
+                bufferSend.append(hex);
             }
             if (bufferSend.size() != 0) {
                 port->write(bufferSend);
