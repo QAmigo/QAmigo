@@ -18,7 +18,7 @@ signals:
     void errorMessage(QString string);
 
 public slots:
-    void rawDataReady(QByteArray array);
+    void rawDataReady(const QByteArray &array);
 
 private slots:
     void onButtonReceiveClearClicked();

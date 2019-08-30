@@ -26,8 +26,8 @@ private:
     const QListWidget *listType;
 
 signals:
-    void frameReady(QByteArray array);		//Sends one ready frame out.
-    void rawDataReady(QByteArray array);	//Sends what it recives.
+    void frameReady(const QByteArray &array);		//Sends one ready frame out.
+    void rawDataReady(const QByteArray &array);	//Sends what it recives.
 
 private slots:
     void dataReady();

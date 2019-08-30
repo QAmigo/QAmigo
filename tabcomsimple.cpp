@@ -37,7 +37,7 @@ TabCOMSimple::TabCOMSimple(QWidget *parent,
     connect(buttonReceiveClear, &QPushButton::clicked, this, &TabCOMSimple::onButtonReceiveClearClicked);
 }
 
-void TabCOMSimple::rawDataReady(QByteArray array)
+void TabCOMSimple::rawDataReady(const QByteArray &array)
 {
     /*
      * appendPlainText is much more faster than insert or any other methods. But in Qt,
