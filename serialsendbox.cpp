@@ -58,7 +58,9 @@ void SerialSendBox::on_buttonSend_clicked()
 {
     if (port->isOpen()) {
         if (radioASC->isChecked()) {
-            port->write(boxSend->toPlainText().toUtf8());
+            QString text = boxSend->toPlainText();
+            port->write(text.toUtf8());
+            emit addSendCount(text.count());
         } else {
             QByteArray bufferSend;
             QByteArray *bufferInput = new QByteArray(boxSend->toPlainText().remove(' ').toLower().toUtf8());
@@ -73,6 +75,7 @@ void SerialSendBox::on_buttonSend_clicked()
             }
             if (bufferSend.size() != 0) {
                 port->write(bufferSend);
+                emit addSendCount(bufferSend.count());
             }
         }
     }

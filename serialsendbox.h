@@ -17,6 +17,7 @@ public:
 
 signals:
     void errorSend(QString string);
+    void addSendCount(int count);
 
 private:
     char parseHex(QByteArray *array);

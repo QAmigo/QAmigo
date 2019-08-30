@@ -31,6 +31,7 @@ SOURCES += \
         serialsendbox.cpp \
         tabadvanced.cpp \
         tabcomsimple.cpp \
+        transfercounter.cpp \
         vartypeitem.cpp
 
 HEADERS += \
@@ -39,6 +40,7 @@ HEADERS += \
         serialsendbox.h \
         tabadvanced.h \
         tabcomsimple.h \
+        transfercounter.h \
         vartypeitem.h
 
 FORMS += \

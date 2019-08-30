@@ -6,6 +6,9 @@
 #include <QtWidgets/QRadioButton>
 #include <QPlainTextEdit>
 #include <QSerialPort>
+#include <QLabel>
+
+#include "transfercounter.h"
 
 class TabCOMSimple : public QWidget
 {
@@ -19,6 +22,7 @@ signals:
 
 public slots:
     void rawDataReady(const QByteArray &array);
+    void addTXCount(int count);
 
 private slots:
     void onButtonReceiveClearClicked();
@@ -29,6 +33,8 @@ private:
     QRadioButton *radioReceiveHex;
     QRadioButton *radioReceiveASC;
     QPushButton *buttonReceiveClear;
+    TransferCounter *counterRX;
+    TransferCounter *counterTX;
 };
 
 #endif // TABCOMSIMPLE_H

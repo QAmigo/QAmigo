@@ -9,7 +9,9 @@ TabCOMSimple::TabCOMSimple(QWidget *parent,
     boxReceive(new QPlainTextEdit()),
     radioReceiveHex(new QRadioButton("Hex")),
     radioReceiveASC(new QRadioButton("ASC")),
-    buttonReceiveClear(new QPushButton("Clear Receive"))
+    buttonReceiveClear(new QPushButton("Clear All")),
+    counterRX(new TransferCounter(parent, new QString("RX"))),
+    counterTX(new TransferCounter(parent, new QString("TX")))
 {
     radioReceiveASC->setChecked(true);
 
@@ -26,12 +28,17 @@ TabCOMSimple::TabCOMSimple(QWidget *parent,
 
     layoutReceiveControls->addWidget(radioReceiveASC);
     layoutReceiveControls->addWidget(radioReceiveHex);
+
+    layoutReceiveControls->addWidget(counterRX);
+    layoutReceiveControls->addWidget(counterTX);
+
     layoutReceiveControls->addWidget(buttonReceiveClear);
 
     for (int i = 0; i < 5; i++) {
         SerialSendBox *box = new SerialSendBox(this, port);
         layoutSend->addWidget(box);
         connect(box, &SerialSendBox::errorSend, this, &TabCOMSimple::sendError);
+        connect(box, &SerialSendBox::addSendCount, this, &TabCOMSimple::addTXCount);
     }
 
     connect(buttonReceiveClear, &QPushButton::clicked, this, &TabCOMSimple::onButtonReceiveClearClicked);
@@ -46,6 +53,7 @@ void TabCOMSimple::rawDataReady(const QByteArray &array)
      * as a log system until we can implment a better append method.
      */
     QString buffer = QTime().currentTime().toString("[hh:mm:ss.zzz]: ");
+    counterRX->add(array.size());
 
     if (radioReceiveASC->isChecked())
         boxReceive->appendPlainText(buffer.append(array));
@@ -63,9 +71,16 @@ void TabCOMSimple::rawDataReady(const QByteArray &array)
     }
 }
 
+void TabCOMSimple::addTXCount(int count)
+{
+    counterTX->add(count);
+}
+
 void TabCOMSimple::onButtonReceiveClearClicked()
 {
     boxReceive->setPlainText("");
+    counterRX->clear();
+    counterTX->clear();
 }
 
 void TabCOMSimple::sendError(QString string)
