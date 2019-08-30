@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 #include "serialsendbox.h"
 #include "decoder.h"
-#include "tabadvanced.h"
 
 #include <QMessageBox>
 #include <QtSerialPort/QSerialPortInfo>
@@ -48,6 +47,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboFlowControl->addItem("Hard", 1);
     ui->comboFlowControl->addItem("Soft", 2);
     ui->comboFlowControl->setCurrentIndex(0);
+
+    tabCOMSimple = new TabCOMSimple(this, port);
+    ui->tabMain->addTab(tabCOMSimple, "Simple");
+
+    tabAdvanced = new TabAdvanced(this);
+    ui->tabMain->addTab(tabAdvanced, "Advanced");
 
     connect(ui->buttonOpen, &QPushButton::clicked, this, &MainWindow::openSerial);
 }
@@ -166,13 +171,8 @@ void MainWindow::openSerial()
 
             Decoder *decoder = new Decoder(this, port);
 
-            TabCOMSimple *tabCOMSimple = new TabCOMSimple(this, port);
-            ui->tabMain->addTab(tabCOMSimple, "Simple");
             connect(tabCOMSimple, &TabCOMSimple::errorMessage, this, &MainWindow::errorMessage);
             connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
-
-            TabAdvanced *tabAdvanced = new TabAdvanced(this);
-            ui->tabMain->addTab(tabAdvanced, "Advanced");
         }
     }
 }
