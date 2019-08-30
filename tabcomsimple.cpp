@@ -2,6 +2,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <serialsendbox.h>
+#include <QTime>
 
 TabCOMSimple::TabCOMSimple(QWidget *parent,
                            QSerialPort *port) : QWidget(parent),
@@ -38,18 +39,27 @@ TabCOMSimple::TabCOMSimple(QWidget *parent,
 
 void TabCOMSimple::rawDataReady(QByteArray array)
 {
-    boxReceive->moveCursor(QTextCursor::End);
+    /*
+     * appendPlainText is much more faster than insert or any other methods. But in Qt,
+     * QPlainTextEdit is designed as a log system, which means it will automatically
+     * append new line when we append new text and this is inevitable., so better use it
+     * as a log system until we can implment a better append method.
+     */
+    QString buffer = QTime().currentTime().toString("[hh:mm:ss.zzz]: ");
+
     if (radioReceiveASC->isChecked())
-        boxReceive->insertPlainText(array);
+        boxReceive->appendPlainText(buffer.append(array));
     else {
         uint16_t count = 0;
+        QString temp;
         for (char data : array.toHex()) {
             if (count % 2 == 1)
-                boxReceive->insertPlainText(QString().sprintf("%c ", data));
+                temp.append(QString().sprintf("%c ", data));
             else
-                boxReceive->insertPlainText(QString().sprintf("%c", data));
+                temp.append(QString().sprintf("%c", data));
             count++;
         }
+        boxReceive->appendPlainText(buffer.append(temp));
     }
 }
 
