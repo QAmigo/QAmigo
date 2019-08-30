@@ -1,7 +1,9 @@
 #include "serialsendbox.h"
-#include <QPainter>
-#include <QVBoxLayout>
+
 #include <QHBoxLayout>
+#include <QPainter>
+#include <QSpacerItem>
+#include <QVBoxLayout>
 #include <QMessageBox>
 
 SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(parent),
@@ -9,7 +11,12 @@ SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(paren
     radioHex(new QRadioButton("Hex", this)),
     radioASC(new QRadioButton("ASC", this)),
     boxSend(new QPlainTextEdit(this)),
-    port(port)
+    port(port),
+    checkTimer(new QCheckBox()),
+    labelTimer(new QLabel("Repeat Send Every")),
+    spinTimer(new QSpinBox()),
+    labelMs(new QLabel("ms")),
+    timer(new QBasicTimer())
 {
     radioASC->setChecked(true);
 
@@ -19,6 +26,15 @@ SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(paren
     QHBoxLayout *layoutControls = new QHBoxLayout(this);
     layoutControls->addWidget(radioASC);
     layoutControls->addWidget(radioHex);
+    layoutControls->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    layoutControls->addWidget(checkTimer);
+    layoutControls->addWidget(labelTimer);
+    layoutControls->addWidget(spinTimer);
+    spinTimer->setMinimum(1);
+    spinTimer->setMaximum(99999);
+    spinTimer->setValue(1000);
+    layoutControls->addWidget(labelMs);
+    layoutControls->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
     layoutControls->addWidget(buttonSend);
     layout->addLayout(layoutControls);
     setLayout(layout);
@@ -26,6 +42,8 @@ SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(paren
     connect(buttonSend, &QPushButton::clicked, this, &SerialSendBox::on_buttonSend_clicked);
     connect(radioASC, &QRadioButton::clicked, this, &SerialSendBox::onCheckBoxChanged);
     connect(radioHex, &QRadioButton::clicked, this, &SerialSendBox::onCheckBoxChanged);
+    connect(checkTimer, &QCheckBox::stateChanged, this, &SerialSendBox::onCheckTimerStateChanged);
+    connect(spinTimer, QOverload<int>::of(&QSpinBox::valueChanged), this, &SerialSendBox::onSpinTimerValueChanged);
 }
 
 int8_t SerialSendBox::toHex(char data)
@@ -84,4 +102,32 @@ void SerialSendBox::on_buttonSend_clicked()
 void SerialSendBox::onCheckBoxChanged()
 {
     boxSend->setPlainText("");
+}
+
+void SerialSendBox::onCheckTimerStateChanged()
+{
+    if (checkTimer->checkState() == Qt::CheckState::Checked)
+        timer->start(spinTimer->value(), this);
+    else
+        timer->stop();
+}
+
+void SerialSendBox::onSpinTimerValueChanged(int i)
+{
+    /*
+     * If value of spinbox is edited when repeat sending ebaled,
+     * new value will be reloaded to the timer automatically.
+     */
+    if (checkTimer->checkState() == Qt::CheckState::Checked) {
+        timer->stop();
+        timer->start(i, this);
+    }
+}
+
+void SerialSendBox::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == timer->timerId())
+        on_buttonSend_clicked();
+    else
+        QWidget::timerEvent(event);
 }

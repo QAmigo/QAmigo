@@ -1,6 +1,10 @@
 #ifndef SERIALSENDBOX_H
 #define SERIALSENDBOX_H
 
+#include <QBasicTimer>
+#include <QCheckBox>
+#include <QLabel>
+#include <QSpinBox>
 #include <QWidget>
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
@@ -26,6 +30,8 @@ private:
 private slots:
     void on_buttonSend_clicked();
     void onCheckBoxChanged();
+    void onCheckTimerStateChanged();
+    void onSpinTimerValueChanged(int i);
 
 private:
     QPushButton *buttonSend;
@@ -34,6 +40,15 @@ private:
     QGroupBox *groupTranslateType;
     QPlainTextEdit *boxSend;
     QSerialPort *port;
+    QCheckBox *checkTimer;
+    QLabel *labelTimer;
+    QSpinBox *spinTimer;
+    QLabel *labelMs;
+    QBasicTimer *timer;
+
+    // QObject interface
+protected:
+    void timerEvent(QTimerEvent *event) override;
 };
 
 #endif // SERIALSENDBOX_H
