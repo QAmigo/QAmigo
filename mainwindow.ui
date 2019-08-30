@@ -11,7 +11,12 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Q Serial Socket Amigo</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normalon>:/com_128px.ico</normalon>
+   </iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
