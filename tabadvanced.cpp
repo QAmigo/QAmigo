@@ -12,7 +12,7 @@
 TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     buttonEnable(new QPushButton("Enable")),
     labelHeader(new QLabel("Frame Header")),
-    boxHeader(new QLineEdit()),
+    boxHeader(new QLineEdit("AAAA")),
     labelType(new QLabel("Var Type")),
     comboType(new QComboBox()),
     listProtocal(new QListWidget()),
@@ -59,6 +59,7 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     layoutListControls->addWidget(buttonEnable);
     layoutListControls->addWidget(labelHeader);
     layoutListControls->addWidget(boxHeader);
+    boxHeader->setMaxLength(4);
     layoutListControls->addWidget(labelType);
     layoutListControls->addWidget(comboType);
     layoutListControls->addWidget(groupEndianess);
@@ -114,11 +115,12 @@ void TabAdvanced::frameDataReady(QByteArray array)
 void TabAdvanced::onButtonAddClicked()
 {
     listProtocal->addItem(new VarTypeItem(comboType->currentText(), static_cast<VAR_TYPE>(comboType->currentData().toInt())));
+    listProtocal->setCurrentRow(listProtocal->count() - 1);
 }
 
 void TabAdvanced::onButtonDeleteClicked()
 {
-    listProtocal->currentRow();
+    listProtocal->takeItem(listProtocal->currentRow());
 }
 
 void TabAdvanced::onButtonUpClicked()
