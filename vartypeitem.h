@@ -5,6 +5,8 @@
 #include <QString>
 #include <QListWidgetItem>
 
+#include <decodeditem.h>
+
 typedef enum {
     U8,
     I8,
@@ -24,7 +26,7 @@ typedef enum {
 class VarTypeItem : public QListWidgetItem
 {
 public:
-    VarTypeItem(QString string, VAR_TYPE type);
+    VarTypeItem(QString nameType, VAR_TYPE type, QString name);
 
 public:
     VAR_TYPE type;
@@ -33,6 +35,7 @@ public:
     int getSize();
     double getDouble(ENDIANESS endianess);
     void setBufferValue(const QByteArray &bufferValue);
+    QString getName();
 
 private:
     void fillValue(uint8_t *p, int byteCount, ENDIANESS endianess);
@@ -40,6 +43,8 @@ private:
 private:
     QByteArray bufferValue;
     double value;
+    DecodedItem *item;
+    QString name;
 };
 
 #endif // VARTYPE_H

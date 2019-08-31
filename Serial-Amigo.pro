@@ -25,9 +25,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        datavisualizationgraph.cpp \
+        decodeditem.cpp \
         decoder.cpp \
         main.cpp \
         mainwindow.cpp \
+        nameallocator.cpp \
         serialsendbox.cpp \
         tabadvanced.cpp \
         tabcomsimple.cpp \
@@ -35,8 +38,11 @@ SOURCES += \
         vartypeitem.cpp
 
 HEADERS += \
+        datavisualizationgraph.h \
+        decodeditem.h \
         decoder.h \
         mainwindow.h \
+        nameallocator.h \
         serialsendbox.h \
         tabadvanced.h \
         tabcomsimple.h \

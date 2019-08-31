@@ -9,10 +9,12 @@
 #include <QGroupBox>
 #include <QPushButton>
 #include <QRadioButton>
-#include <QGraphicsView>
 #include <QLineEdit>
 #include <QLabel>
 
+#include "datavisualizationgraph.h"
+#include "decodeditem.h"
+#include "nameallocator.h"
 #include "vartypeitem.h"
 
 class TabAdvanced : public QWidget
@@ -35,6 +37,7 @@ private slots:
     void onButtonEnableClicked();
     void onRadioLittleBigClicked();
     void onBoxHeaderTextChanged();
+    void onDecodedItemClicked();
 
 private:
     void updateDecodeParameters();
@@ -58,11 +61,16 @@ private:
     QPlainTextEdit *boxLog;
     QPushButton *buttonClearLog;
 
-    QGraphicsView *graph;
-    QPushButton *buttonClearGraph;
+    DataVisualizationGraph *graph;
 
     bool enabled;
     ENDIANESS endianess;
+
+    QGridLayout *layoutLabels;
+    uint8_t countLabels;
+    QList<DecodedItem *> *listDecodedItems;
+
+    NameAllocator *nameAllocator;
 };
 
 #endif // TABADVANCED_H

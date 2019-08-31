@@ -1,8 +1,9 @@
 #include "vartypeitem.h"
 
-VarTypeItem::VarTypeItem(QString string, VAR_TYPE type) :
-    QListWidgetItem (string),
-    type(type)
+VarTypeItem::VarTypeItem(QString nameType, VAR_TYPE type, QString name) :
+    QListWidgetItem (name + '\t' + nameType),
+    type(type),
+    name(name)
 {
 
 }
@@ -34,6 +35,11 @@ int VarTypeItem::getSize()
 void VarTypeItem::setBufferValue(const QByteArray &bufferValue)
 {
     this->bufferValue = bufferValue;
+}
+
+QString VarTypeItem::getName()
+{
+    return name;
 }
 
 void VarTypeItem::fillValue(uint8_t *p, int byteCount, ENDIANESS endianess)

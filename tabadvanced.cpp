@@ -26,23 +26,24 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     buttonDown(new QPushButton("Down")),
     boxLog(new QPlainTextEdit()),
     buttonClearLog(new QPushButton("Clear")),
-    graph(new QGraphicsView()),
-    buttonClearGraph(new QPushButton("Clear")),
+    graph(new DataVisualizationGraph()),
     enabled(false),
-    endianess(LITTLE)
+    endianess(BIG),
+    layoutLabels(new QGridLayout()),
+    countLabels(0),
+    listDecodedItems(new QList<DecodedItem *>()),
+    nameAllocator(new NameAllocator())
 {
     QGridLayout *layoutMain = new QGridLayout();
     setLayout(layoutMain);
 
     QHBoxLayout *layoutList = new QHBoxLayout();
-    QGridLayout *layoutLabels = new QGridLayout();
     QVBoxLayout *layoutLog = new QVBoxLayout();
-    QVBoxLayout *layoutGraph = new QVBoxLayout();
 
     layoutMain->addLayout(layoutList, 0, 0);
     layoutMain->addLayout(layoutLabels, 0, 1);
     layoutMain->addLayout(layoutLog, 1, 0);
-    layoutMain->addLayout(layoutGraph, 1, 1);
+    layoutMain->addWidget(graph, 1, 1);
 
     comboType->addItem("U8", VAR_TYPE::U8);
     comboType->addItem("I8", VAR_TYPE::I8);
@@ -90,11 +91,6 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     QHBoxLayout *layoutLogControls = new QHBoxLayout();
     layoutLog->addLayout(layoutLogControls);
     layoutLogControls->addWidget(buttonClearLog);
-
-    layoutGraph->addWidget(graph);
-    QHBoxLayout *layoutGraphControls = new QHBoxLayout();
-    layoutGraph->addLayout(layoutGraphControls);
-    layoutGraphControls->addWidget(buttonClearGraph);
 }
 
 void TabAdvanced::frameDataReady(QByteArray array)
@@ -102,12 +98,18 @@ void TabAdvanced::frameDataReady(QByteArray array)
     QString bufferShow;
     if (enabled) {
         int count = 0;
+        QList<double> list;
         for (int i = 0; i < listProtocal->count(); i++) {
             VarTypeItem *item = static_cast<VarTypeItem *>(listProtocal->item(i));
             item->setBufferValue(array.mid(count, item->getSize()));
             count += item->getSize();
-            bufferShow.append(QString().sprintf("%4.2lf ", item->getDouble(endianess)));
+            double val = item->getDouble(endianess);
+            bufferShow.append(QString().sprintf("%4.2lf ", val));
+            if ((*listDecodedItems)[i]->checkShow->isChecked())
+                list.append(val);
         }
+        if (list.count() != 0)
+            graph->appendData(list);
         if (bufferShow.count() != 0)
             boxLog->appendPlainText(bufferShow);
     }
@@ -115,14 +117,27 @@ void TabAdvanced::frameDataReady(QByteArray array)
 
 void TabAdvanced::onButtonAddClicked()
 {
-    listProtocal->addItem(new VarTypeItem(comboType->currentText(), static_cast<VAR_TYPE>(comboType->currentData().toInt())));
-    listProtocal->setCurrentRow(listProtocal->count() - 1);
-    updateDecodeParameters();
+    if (listProtocal->count() < 25) {
+        VarTypeItem *typeItem = new VarTypeItem(comboType->currentText(), static_cast<VAR_TYPE>(comboType->currentData().toInt()), nameAllocator->allocateName());
+        listProtocal->addItem(typeItem);
+        listProtocal->setCurrentRow(listProtocal->count() - 1);
+        updateDecodeParameters();
+        //Max 25 labels.
+        DecodedItem *decodedItem = new DecodedItem(this, typeItem->getName());
+        connect(decodedItem->checkShow, &QCheckBox::clicked, this, &TabAdvanced::onDecodedItemClicked);
+        layoutLabels->addWidget(decodedItem, countLabels / 5, countLabels % 5);
+        listDecodedItems->append(decodedItem);
+        countLabels++;
+    }
 }
 
 void TabAdvanced::onButtonDeleteClicked()
 {
-    listProtocal->takeItem(listProtocal->currentRow());
+    layoutLabels->removeWidget((*listDecodedItems)[listProtocal->currentRow()]);
+    delete listDecodedItems->takeAt(listProtocal->currentRow());
+    //Attention: current row changed after the following line.
+    VarTypeItem *item = static_cast<VarTypeItem *>(listProtocal->takeItem(listProtocal->currentRow()));
+    nameAllocator->freeName(item->getName());
     updateDecodeParameters();
 }
 
@@ -169,6 +184,21 @@ void TabAdvanced::onRadioLittleBigClicked()
 void TabAdvanced::onBoxHeaderTextChanged()
 {
     updateDecodeParameters();
+}
+
+void TabAdvanced::onDecodedItemClicked()
+{
+    for (DecodedItem *item : *listDecodedItems) {
+        if (item->isCheckChanged()) {
+            item->clearState();
+            if (item->checkShow->isChecked()) {
+                graph->createSeries(item->getName());
+            } else {
+
+            }
+            return;
+        }
+    }
 }
 
 void TabAdvanced::updateDecodeParameters()
