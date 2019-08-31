@@ -34,6 +34,10 @@ private slots:
     void onButtonDownClicked();
     void onButtonEnableClicked();
     void onRadioLittleBigClicked();
+    void onBoxHeaderTextChanged();
+
+private:
+    void updateDecodeParameters();
 
 private:
     QPushButton *buttonEnable;

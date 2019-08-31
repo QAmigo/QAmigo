@@ -60,6 +60,7 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     layoutListControls->addWidget(labelHeader);
     layoutListControls->addWidget(boxHeader);
     boxHeader->setMaxLength(4);
+    connect(boxHeader, &QLineEdit::textChanged, this, &TabAdvanced::onBoxHeaderTextChanged);
     layoutListControls->addWidget(labelType);
     layoutListControls->addWidget(comboType);
     layoutListControls->addWidget(groupEndianess);
@@ -116,11 +117,13 @@ void TabAdvanced::onButtonAddClicked()
 {
     listProtocal->addItem(new VarTypeItem(comboType->currentText(), static_cast<VAR_TYPE>(comboType->currentData().toInt())));
     listProtocal->setCurrentRow(listProtocal->count() - 1);
+    updateDecodeParameters();
 }
 
 void TabAdvanced::onButtonDeleteClicked()
 {
     listProtocal->takeItem(listProtocal->currentRow());
+    updateDecodeParameters();
 }
 
 void TabAdvanced::onButtonUpClicked()
@@ -130,6 +133,7 @@ void TabAdvanced::onButtonUpClicked()
         listProtocal->insertItem(currentRow - 1, listProtocal->takeItem(currentRow));
         listProtocal->setCurrentRow(currentRow - 1);
     }
+    updateDecodeParameters();
 }
 
 void TabAdvanced::onButtonDownClicked()
@@ -139,6 +143,7 @@ void TabAdvanced::onButtonDownClicked()
         listProtocal->insertItem(currentRow + 1, listProtocal->takeItem(currentRow));
         listProtocal->setCurrentRow(currentRow + 1);
     }
+    updateDecodeParameters();
 }
 
 void TabAdvanced::onButtonEnableClicked()
@@ -146,15 +151,7 @@ void TabAdvanced::onButtonEnableClicked()
     if (enabled == false) {
         buttonEnable->setText("Disable");
         enabled = true;
-
-        std::stringstream ss;
-        uint16_t x;
-        QByteArray header;
-        ss << std::hex << boxHeader->text().toUtf8().constData();
-        ss >> x;
-        header.append(static_cast<char>(x >> 8));
-        header.append(static_cast<char>(x));
-        emit sendDecodeParameters(header, *listProtocal);
+        updateDecodeParameters();
     } else {
         buttonEnable->setText("Enable");
         enabled = false;
@@ -167,4 +164,21 @@ void TabAdvanced::onRadioLittleBigClicked()
         endianess = LITTLE;
     else
         endianess = BIG;
+}
+
+void TabAdvanced::onBoxHeaderTextChanged()
+{
+    updateDecodeParameters();
+}
+
+void TabAdvanced::updateDecodeParameters()
+{
+    std::stringstream ss;
+    uint16_t x;
+    QByteArray header;
+    ss << std::hex << boxHeader->text().toUtf8().constData();
+    ss >> x;
+    header.append(static_cast<char>(x >> 8));
+    header.append(static_cast<char>(x));
+    emit sendDecodeParameters(header, *listProtocal);
 }
