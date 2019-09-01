@@ -3,6 +3,7 @@
 
 #include <QGridLayout>
 #include <QHBoxLayout>
+#include <QRegExpValidator>
 #include <QVBoxLayout>
 #include <QSpacerItem>
 
@@ -59,9 +60,14 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     layoutList->addLayout(layoutListControls);
     layoutListControls->addWidget(buttonEnable);
     layoutListControls->addWidget(labelHeader);
+
+    //QLineEdit boxHeader.
     layoutListControls->addWidget(boxHeader);
-    boxHeader->setMaxLength(4);
+    QRegExp *regexp = new QRegExp("[0-9a-f]{1,4}");
+    QRegExpValidator *validatorHeader = new QRegExpValidator(*regexp);
+    boxHeader->setValidator(validatorHeader);
     connect(boxHeader, &QLineEdit::textChanged, this, &TabAdvanced::onBoxHeaderTextChanged);
+
     layoutListControls->addWidget(labelType);
     layoutListControls->addWidget(comboType);
     layoutListControls->addWidget(groupEndianess);
