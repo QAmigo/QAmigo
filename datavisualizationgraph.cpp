@@ -39,6 +39,9 @@ void DataVisualizationGraph::appendData(const QList<double> &data)
     currentX++;
     if (currentX > 100) {
         chart->axes(Qt::Horizontal).first()->setRange(currentX - 100, currentX);
+        for (auto series : *listSeries)
+            if (series->count() > 100)
+                series->remove(0);
     }
 }
 
