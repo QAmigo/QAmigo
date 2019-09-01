@@ -141,6 +141,21 @@ void TabAdvanced::onButtonDeleteClicked()
     updateDecodeParameters();
 }
 
+void TabAdvanced::onDecodedItemClicked()
+{
+    for (DecodedItem *item : *listDecodedItems) {
+        if (item->isCheckChanged()) {
+            item->clearState();
+            if (item->checkShow->isChecked()) {
+                item->setSeries(graph->createSeries(item->getName()));
+            } else {
+                graph->removeSeries(item->getSeries());
+            }
+            return;
+        }
+    }
+}
+
 void TabAdvanced::onButtonUpClicked()
 {
     int currentRow = listProtocal->currentRow();
@@ -184,21 +199,6 @@ void TabAdvanced::onRadioLittleBigClicked()
 void TabAdvanced::onBoxHeaderTextChanged()
 {
     updateDecodeParameters();
-}
-
-void TabAdvanced::onDecodedItemClicked()
-{
-    for (DecodedItem *item : *listDecodedItems) {
-        if (item->isCheckChanged()) {
-            item->clearState();
-            if (item->checkShow->isChecked()) {
-                graph->createSeries(item->getName());
-            } else {
-
-            }
-            return;
-        }
-    }
 }
 
 void TabAdvanced::updateDecodeParameters()

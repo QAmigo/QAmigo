@@ -35,3 +35,13 @@ void DecodedItem::onCheckBoxClicked()
 {
     stateChanged = true;
 }
+
+QLineSeries *DecodedItem::getSeries() const
+{
+    return series;
+}
+
+void DecodedItem::setSeries(QLineSeries *value)
+{
+    series = value;
+}

@@ -45,11 +45,23 @@ void DataVisualizationGraph::appendData(const QList<double> &data)
     }
 }
 
-void DataVisualizationGraph::createSeries(QString name)
+QLineSeries *DataVisualizationGraph::createSeries(QString name)
 {
     QLineSeries *series = new QLineSeries();
     chart->addSeries(series);
     chart->createDefaultAxes();
     listSeries->append(series);
     series->setName(name);
+    return series;
+}
+
+void DataVisualizationGraph::removeSeries(QLineSeries *series)
+{
+    chart->removeSeries(series);
+    chart->createDefaultAxes();
+    listSeries->removeOne(series);
+    if (chart->series().count() == 0) {
+        max = 0;
+        min = 0;
+    }
 }

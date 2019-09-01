@@ -3,6 +3,8 @@
 
 #include <QCheckBox>
 #include <QLabel>
+#include <QLineSeries>
+#include <QtCharts>
 #include <QWidget>
 
 class DecodedItem : public QWidget
@@ -23,9 +25,13 @@ public slots:
 public:
     QCheckBox *checkShow;
 
+    QLineSeries *getSeries() const;
+    void setSeries(QLineSeries *value);
+
 private:
     QLabel *labelName;	//Custom name?
     bool stateChanged;
+    QLineSeries *series;
 };
 
 #endif // DECODEDITEM_H

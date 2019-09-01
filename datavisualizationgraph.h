@@ -16,7 +16,8 @@ signals:
 
 public:
     void appendData(const QList<double> &data);
-    void createSeries(QString name);
+    QLineSeries *createSeries(QString name);
+    void removeSeries(QLineSeries *series);
 
 public slots:
 
