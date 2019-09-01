@@ -67,3 +67,7 @@ Which means it sends 3 `int16_t` data after frame header with little endianess. 
 It will automatically allocates some name for the variables and generate checkboxes on the right, click the checkbox will draw it on the chart on the bottom right of the window.
 
 ![](doc/images/Data%20in%20chart.png)
+
+## About
+
+The linux version released package uses [CQtDeployer](https://github.com/QuasarApp/Console-QtDeployer) to deploy, thanks to the author's great work!
