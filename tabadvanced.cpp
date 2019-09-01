@@ -180,10 +180,14 @@ void TabAdvanced::onButtonEnableClicked()
 {
     if (enabled == false) {
         buttonEnable->setText("Disable");
+        buttonUp->setEnabled(false);
+        buttonDown->setEnabled(false);
         enabled = true;
         updateDecodeParameters();
     } else {
         buttonEnable->setText("Enable");
+        buttonUp->setEnabled(true);
+        buttonDown->setEnabled(true);
         enabled = false;
     }
 }
