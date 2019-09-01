@@ -23,9 +23,9 @@ int VarTypeItem::getSize()
         return 4;
     case VAR_TYPE::I32 :
         return 4;
-    case VAR_TYPE::FLOAT :
+    case VAR_TYPE::Float :
         return sizeof(float);
-    case VAR_TYPE::DOUBLE :
+    case VAR_TYPE::Double :
         return sizeof(double);
     }
 
@@ -80,13 +80,13 @@ double VarTypeItem::getDouble(ENDIANESS endianess)
         p = reinterpret_cast<uint8_t *>(&i32);
         fillValue(p, 4, endianess);
         return static_cast<double>(i32);
-    case VAR_TYPE::FLOAT :
+    case VAR_TYPE::Float :
         //In Qt, all float should be IEEE defined 32-bit.
         float f;
         p = reinterpret_cast<uint8_t *>(&f);
         fillValue(p, 4, endianess);
         return static_cast<float>(f);
-    case VAR_TYPE::DOUBLE :
+    case VAR_TYPE::Double :
         //Assume double is 64-bit now.
         double d;
         p = reinterpret_cast<uint8_t *>(&d);

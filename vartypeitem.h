@@ -14,8 +14,8 @@ typedef enum {
     I16,
     U32,
     I32,
-    FLOAT,
-    DOUBLE,
+    Float,
+    Double,
 } VAR_TYPE;
 
 typedef enum {

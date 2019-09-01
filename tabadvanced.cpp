@@ -51,8 +51,8 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     comboType->addItem("I16", VAR_TYPE::I16);
     comboType->addItem("U32", VAR_TYPE::U32);
     comboType->addItem("I32", VAR_TYPE::I32);
-    comboType->addItem("float", VAR_TYPE::FLOAT);
-    comboType->addItem("double", VAR_TYPE::DOUBLE);
+    comboType->addItem("float", VAR_TYPE::Float);
+    comboType->addItem("double", VAR_TYPE::Double);
 
     layoutList->addWidget(listProtocal);
     QVBoxLayout *layoutListControls = new QVBoxLayout();
