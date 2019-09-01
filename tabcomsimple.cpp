@@ -49,8 +49,8 @@ void TabCOMSimple::rawDataReady(const QByteArray &array)
     /*
      * appendPlainText is much more faster than insert or any other methods. But in Qt,
      * QPlainTextEdit is designed as a log system, which means it will automatically
-     * append new line when we append new text and this is inevitable., so better use it
-     * as a log system until we can implment a better append method.
+     * append new line when we append new text and this is inevitable, so better use it
+     * as a log system until we can implement a better append method.
      */
     QString buffer = QTime().currentTime().toString("[hh:mm:ss.zzz]: ");
     counterRX->add(array.size());
