@@ -38,6 +38,7 @@ private slots:
     void onRadioLittleBigClicked();
     void onBoxHeaderTextChanged();
     void onDecodedItemClicked();
+    void onButtonClearLogClicked();
 
 private:
     void updateDecodeParameters();

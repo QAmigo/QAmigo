@@ -21,6 +21,9 @@ public:
 
 public slots:
 
+private slots:
+    void onButtonClearClicked();
+
 private:
     QGraphicsView *graph;
     QPushButton *buttonClearGraph;

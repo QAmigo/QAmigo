@@ -91,6 +91,7 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     QHBoxLayout *layoutLogControls = new QHBoxLayout();
     layoutLog->addLayout(layoutLogControls);
     layoutLogControls->addWidget(buttonClearLog);
+    connect(buttonClearLog, &QPushButton::clicked, this, &TabAdvanced::onButtonClearLogClicked);
 }
 
 void TabAdvanced::frameDataReady(QByteArray array)
@@ -154,6 +155,11 @@ void TabAdvanced::onDecodedItemClicked()
             return;
         }
     }
+}
+
+void TabAdvanced::onButtonClearLogClicked()
+{
+    boxLog->clear();
 }
 
 void TabAdvanced::onButtonUpClicked()

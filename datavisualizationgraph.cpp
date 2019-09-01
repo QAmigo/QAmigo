@@ -19,6 +19,7 @@ DataVisualizationGraph::DataVisualizationGraph(QWidget *parent) : QWidget(parent
     QHBoxLayout *layoutControls = new QHBoxLayout();
     layout->addLayout(layoutControls);
     layoutControls->addWidget(buttonClearGraph);
+    connect(buttonClearGraph, &QPushButton::clicked, this, &DataVisualizationGraph::onButtonClearClicked);
 }
 
 void DataVisualizationGraph::appendData(const QList<double> &data)
@@ -61,6 +62,15 @@ void DataVisualizationGraph::removeSeries(QLineSeries *series)
     chart->createDefaultAxes();
     listSeries->removeOne(series);
     if (chart->series().count() == 0) {
+        max = 0;
+        min = 0;
+    }
+}
+
+void DataVisualizationGraph::onButtonClearClicked()
+{
+    for (auto series: *listSeries) {
+        series->clear();
         max = 0;
         min = 0;
     }
