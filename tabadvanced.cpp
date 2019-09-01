@@ -68,11 +68,12 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     boxHeader->setValidator(validatorHeader);
     connect(boxHeader, &QLineEdit::textChanged, this, &TabAdvanced::onBoxHeaderTextChanged);
 
-    layoutListControls->addWidget(labelType);
-    layoutListControls->addWidget(comboType);
     layoutListControls->addWidget(groupEndianess);
     QVBoxLayout *layoutEndianess = new QVBoxLayout();
     groupEndianess->setLayout(layoutEndianess);
+
+    layoutListControls->addWidget(labelType);
+    layoutListControls->addWidget(comboType);
     layoutEndianess->addWidget(radioBig);
     layoutEndianess->addWidget(radioLittle);
     radioBig->setChecked(true);
