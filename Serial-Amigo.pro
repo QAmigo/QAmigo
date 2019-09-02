@@ -27,7 +27,6 @@ CONFIG += c++11
 SOURCES += \
         "src/Advanced Tab/tabadvanced.cpp" \
         "src/Advanced Tab/datavisualizationgraph.cpp" \
-        "src/Advanced Tab/decodeditem.cpp" \
         "src/Advanced Tab/decoder.cpp" \
         "src/Advanced Tab/nameallocator.cpp" \
         "src/Advanced Tab/vartypeitem.cpp" \
@@ -39,7 +38,6 @@ SOURCES += \
 
 HEADERS += \
         "src/Advanced Tab/datavisualizationgraph.h" \
-        "src/Advanced Tab/decodeditem.h" \
         "src/Advanced Tab/decoder.h" \
         "src/Advanced Tab/nameallocator.h" \
         "src/Advanced Tab/tabadvanced.h" \

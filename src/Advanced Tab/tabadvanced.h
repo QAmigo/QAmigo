@@ -14,7 +14,6 @@
 #include <QLabel>
 
 #include "datavisualizationgraph.h"
-#include "decodeditem.h"
 #include "nameallocator.h"
 #include "vartypeitem.h"
 
@@ -39,8 +38,8 @@ private slots:
     void onButtonEnableClicked();
     void onRadioLittleBigClicked();
     void onBoxHeaderTextChanged();
-    void onDecodedItemClicked();
     void onButtonClearLogClicked();
+    void onlistProtocalsDoubleClicked(QListWidgetItem *item);
 
 private:
     void updateDecodeParameters();
@@ -67,10 +66,6 @@ private:
 
     bool enabled;
     ENDIANESS endianess;
-
-    QGridLayout *layoutLabels;
-    uint8_t countLabels;
-    QList<DecodedItem *> *listDecodedItems;
 
     NameAllocator *nameAllocator;
     QRegExpValidator *validatorHeader;

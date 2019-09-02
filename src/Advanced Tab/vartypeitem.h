@@ -3,9 +3,9 @@
 
 #include <QByteArray>
 #include <QString>
+#include <QtCharts>
 #include <QListWidgetItem>
-
-#include "decodeditem.h"
+#include <QLineSeries>
 
 typedef enum {
     U8,
@@ -37,14 +37,17 @@ public:
     void setBufferValue(const QByteArray &bufferValue);
     QString getName();
 
+    QLineSeries *getSeries() const;
+    void setSeries(QLineSeries *value);
+
 private:
     void fillValue(uint8_t *p, int byteCount, ENDIANESS endianess);
 
 private:
     QByteArray bufferValue;
     double value;
-    DecodedItem *item;
     QString name;
+    QLineSeries *series;
 };
 
 #endif // VARTYPE_H

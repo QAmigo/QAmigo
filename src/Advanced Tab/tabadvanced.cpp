@@ -1,7 +1,6 @@
 #include "tabadvanced.h"
 #include "vartypeitem.h"
 
-#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QSpacerItem>
@@ -28,22 +27,21 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     graph(new DataVisualizationGraph()),
     enabled(false),
     endianess(BIG),
-    layoutLabels(new QGridLayout()),
-    countLabels(0),
-    listDecodedItems(new QList<DecodedItem *>()),
     nameAllocator(new NameAllocator()),
     validatorHeader(new QRegExpValidator(QRegExp("[0-9a-fA-F]{1,4}")))
 {
-    QGridLayout *layoutMain = new QGridLayout();
+    QVBoxLayout *layoutMain = new QVBoxLayout();
     setLayout(layoutMain);
+
+    QHBoxLayout *layoutListLog = new QHBoxLayout();
+    layoutMain->addLayout(layoutListLog);
 
     QHBoxLayout *layoutList = new QHBoxLayout();
     QVBoxLayout *layoutLog = new QVBoxLayout();
 
-    layoutMain->addLayout(layoutList, 0, 0);
-    layoutMain->addLayout(layoutLabels, 0, 1);
-    layoutMain->addLayout(layoutLog, 1, 0);
-    layoutMain->addWidget(graph, 1, 1);
+    layoutListLog->addLayout(layoutList);
+    layoutListLog->addLayout(layoutLog);
+    layoutMain->addWidget(graph);
 
     comboType->addItem("U8", VAR_TYPE::U8);
     comboType->addItem("I8", VAR_TYPE::I8);
@@ -91,6 +89,8 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     connect(buttonEnable, &QPushButton::clicked, this, &TabAdvanced::onButtonEnableClicked);
 
     layoutList->setStretchFactor(listProtocal, 4);
+    connect(listProtocal, &QListWidget::itemDoubleClicked, this, &TabAdvanced::onlistProtocalsDoubleClicked);
+
     layoutList->setStretchFactor(layoutListControls, 1);
 
     layoutLog->addWidget(boxLog);
@@ -102,7 +102,6 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
 
 TabAdvanced::~TabAdvanced()
 {
-    delete listDecodedItems;
     delete nameAllocator;
     delete validatorHeader;
 }
@@ -119,7 +118,7 @@ void TabAdvanced::frameDataReady(QByteArray array)
             count += item->getSize();
             double val = item->getDouble(endianess);
             bufferShow.append(QString().sprintf("%4.2lf ", val));
-            if ((*listDecodedItems)[i]->checkShow->isChecked())
+            if (item->getSeries() != nullptr)
                 list.append(val);
         }
         if (list.count() != 0)
@@ -131,48 +130,37 @@ void TabAdvanced::frameDataReady(QByteArray array)
 
 void TabAdvanced::onButtonAddClicked()
 {
-    if (listProtocal->count() < 25) {
-        VarTypeItem *typeItem = new VarTypeItem(comboType->currentText(), static_cast<VAR_TYPE>(comboType->currentData().toInt()), nameAllocator->allocateName());
-        listProtocal->addItem(typeItem);
-        listProtocal->setCurrentRow(listProtocal->count() - 1);
-        updateDecodeParameters();
-        //Max 25 labels.
-        DecodedItem *decodedItem = new DecodedItem(this, typeItem->getName());
-        connect(decodedItem->checkShow, &QCheckBox::clicked, this, &TabAdvanced::onDecodedItemClicked);
-        layoutLabels->addWidget(decodedItem, countLabels / 5, countLabels % 5);
-        listDecodedItems->append(decodedItem);
-        countLabels++;
-    }
+    VarTypeItem *typeItem = new VarTypeItem(comboType->currentText(), static_cast<VAR_TYPE>(comboType->currentData().toInt()), nameAllocator->allocateName());
+    listProtocal->addItem(typeItem);
+    listProtocal->setCurrentRow(listProtocal->count() - 1);
+    updateDecodeParameters();
 }
 
 void TabAdvanced::onButtonDeleteClicked()
 {
-    layoutLabels->removeWidget((*listDecodedItems)[listProtocal->currentRow()]);
-    delete listDecodedItems->takeAt(listProtocal->currentRow());
-    //Attention: current row changed after the following line.
     VarTypeItem *item = static_cast<VarTypeItem *>(listProtocal->takeItem(listProtocal->currentRow()));
     nameAllocator->freeName(item->getName());
     updateDecodeParameters();
 }
 
-void TabAdvanced::onDecodedItemClicked()
-{
-    for (DecodedItem *item : *listDecodedItems) {
-        if (item->isCheckChanged()) {
-            item->clearState();
-            if (item->checkShow->isChecked()) {
-                item->setSeries(graph->createSeries(item->getName()));
-            } else {
-                graph->removeSeries(item->getSeries());
-            }
-            return;
-        }
-    }
-}
-
 void TabAdvanced::onButtonClearLogClicked()
 {
     boxLog->clear();
+}
+
+void TabAdvanced::onlistProtocalsDoubleClicked(QListWidgetItem *item)
+{
+    VarTypeItem *varTypeItem = static_cast<VarTypeItem *>(item);
+
+    if (varTypeItem->getSeries() == nullptr) {
+        varTypeItem->setSeries(graph->createSeries(varTypeItem->getName()));
+        varTypeItem->setBackground(Qt::cyan);
+    } else {
+        graph->removeSeries(varTypeItem->getSeries());
+        varTypeItem->setSeries(nullptr);
+        varTypeItem->setBackground(Qt::white);
+    }
+    item->setSelected(false);
 }
 
 void TabAdvanced::onButtonUpClicked()
@@ -199,14 +187,10 @@ void TabAdvanced::onButtonEnableClicked()
 {
     if (enabled == false) {
         buttonEnable->setText("Disable");
-        buttonUp->setEnabled(false);
-        buttonDown->setEnabled(false);
         enabled = true;
         updateDecodeParameters();
     } else {
         buttonEnable->setText("Enable");
-        buttonUp->setEnabled(true);
-        buttonDown->setEnabled(true);
         enabled = false;
     }
 }

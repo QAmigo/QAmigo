@@ -3,7 +3,8 @@
 VarTypeItem::VarTypeItem(QString nameType, VAR_TYPE type, QString name) :
     QListWidgetItem (name + '\t' + nameType),
     type(type),
-    name(name)
+    name(name),
+    series(nullptr)
 {
 
 }
@@ -50,6 +51,16 @@ void VarTypeItem::fillValue(uint8_t *p, int byteCount, ENDIANESS endianess)
         else
             *p++ = static_cast<uint8_t>(bufferValue[byteCount - i - 1]);
     }
+}
+
+QLineSeries *VarTypeItem::getSeries() const
+{
+    return series;
+}
+
+void VarTypeItem::setSeries(QLineSeries *value)
+{
+    series = value;
 }
 
 double VarTypeItem::getDouble(ENDIANESS endianess)
