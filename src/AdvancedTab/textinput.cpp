@@ -1,11 +1,12 @@
-#include "nameasker.h"
-#include "ui_nameasker.h"
+#include "textinput.h"
+#include "ui_textinput.h"
 
+#include <QRegExpValidator>
 #include <QTimer>
 
-NameAsker::NameAsker(QWidget *parent, QString name) :
+TextInput::TextInput(QWidget *parent, QString name, QString regexText) :
     QDialog(parent),
-    ui(new Ui::NameAsker)
+    ui(new Ui::TextInput)
 {
     ui->setupUi(this);
 
@@ -18,16 +19,18 @@ NameAsker::NameAsker(QWidget *parent, QString name) :
      * This will add some delay to make selectAll operation happens
      * after the mousePressEvent.
      */
+    if (regexText != "")
+        ui->lineEditName->setValidator(new QRegExpValidator(QRegExp(regexText)));
     QTimer::singleShot(50, ui->lineEditName, &QLineEdit::selectAll);
     ui->lineEditName->setFocus();
 }
 
-NameAsker::~NameAsker()
+TextInput::~TextInput()
 {
     delete ui;
 }
 
-QString NameAsker::getName()
+QString TextInput::getText()
 {
     return ui->lineEditName->text();
 }

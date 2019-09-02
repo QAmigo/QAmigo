@@ -7,25 +7,26 @@
 #include <QList>
 #include <QListWidget>
 
-#include "vartypeitem.h"
+#include "protocal.h"
+#include "vartype.h"
 
 class Decoder : public QObject
 {
     Q_OBJECT
 
 public:
-    Decoder(QObject *object);
+    Decoder(QObject *object, QList<Protocal *> &listProtocals);
     ~Decoder();
 
 signals:
-    void frameReady(const QByteArray &array);		//Sends one ready frame out.
+    void frameReady(int id, const QByteArray &array);		//Sends one ready frame out.
     void rawDataReady(const QByteArray &array);	//Sends what it recives.
 
 public:
     void setConnection(QIODevice *connection);
 
-public slots:
-    void setDecodeParameters(const QByteArray header, const QListWidget &types);
+//public slots:
+//    void onDecodedParametersUpdated(const QList<Protocal *> &listProtocals);
 
 private slots:
     void dataReady();
@@ -35,10 +36,8 @@ private:
 
 private:
     QByteArray buffer;
-    QByteArray frameHeader;
     QIODevice *connection;
-    uint16_t frameLength;
-    QList<VAR_TYPE> *listType;
+    QList<Protocal *> &listProtocals;
 };
 
 #endif // DECODERTHREAD_H

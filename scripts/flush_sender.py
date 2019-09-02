@@ -6,7 +6,11 @@ import sys
 
 bufferHex = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 bufferStr = "abcdefghijklmnopqrstuvwxyz"
-bufferSend = bufferStr.encode('utf-8')
+bufferFrameA = [0x55, 0x51, 0x01, 0x00, 0x02, 0x00, 0x03, 0x00]
+bufferFrameB = [0x55, 0x52, 0x04, 0x00, 0x05, 0x00, 0x06, 0x00]
+bufferFrameC = [0x55, 0x53, 0x07, 0x00, 0x08, 0x00, 0x09, 0x00]
+#bufferSend = bufferStr.encode('utf-8')
+bufferSend = bufferFrameA
 
 if __name__ == '__main__':
 	if (len(sys.argv) != 4):
@@ -23,5 +27,7 @@ if __name__ == '__main__':
 			print(e)
 			exit(-1)
 		while True:
-			port.write(bufferSend)
+			port.write(bufferFrameA)
+			port.write(bufferFrameB)
+			port.write(bufferFrameC)
 			time.sleep(interval)

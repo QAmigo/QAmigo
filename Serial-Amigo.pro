@@ -25,33 +25,41 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        "src/Advanced Tab/tabadvanced.cpp" \
-        "src/Advanced Tab/datavisualizationgraph.cpp" \
-        "src/Advanced Tab/decoder.cpp" \
-        "src/Advanced Tab/nameallocator.cpp" \
-        "src/Advanced Tab/vartypeitem.cpp" \
-        "src/Advanced Tab/nameasker.cpp" \
-        "src/mainwindow.cpp" \
-        "src/main.cpp" \
-        "src/Simple Tab/serialsendbox.cpp" \
-        "src/Simple Tab/tabcomsimple.cpp" \
-        "src/Simple Tab/transfercounter.cpp"
+        src/AdvancedTab/protocal.cpp \
+        src/AdvancedTab/protocaldataitem.cpp \
+        src/AdvancedTab/protocalheaderitem.cpp \
+        src/AdvancedTab/tabadvanced.cpp \
+        src/AdvancedTab/datavisualizationgraph.cpp \
+        src/AdvancedTab/decoder.cpp \
+        src/AdvancedTab/nameallocator.cpp \
+        src/AdvancedTab/textinput.cpp \
+        src/AdvancedTab/vartype.cpp \
+        src/mainwindow.cpp \
+        src/main.cpp \
+        src/SimpleTab/serialsendbox.cpp \
+        src/SimpleTab/tabcomsimple.cpp \
+        src/SimpleTab/transfercounter.cpp \
+        src/AdvancedTab/texttranslator.cpp
 
 HEADERS += \
-        "src/Advanced Tab/datavisualizationgraph.h" \
-        "src/Advanced Tab/decoder.h" \
-        "src/Advanced Tab/nameallocator.h" \
-        "src/Advanced Tab/tabadvanced.h" \
-        "src/Advanced Tab/vartypeitem.h" \
-        "src/Advanced Tab/nameasker.h" \
-        "src/mainwindow.h" \
-        "src/Simple Tab/serialsendbox.h" \
-        "src/Simple Tab/tabcomsimple.h" \
-        "src/Simple Tab/transfercounter.h"
+        src/AdvancedTab/datavisualizationgraph.h \
+        src/AdvancedTab/decoder.h \
+        src/AdvancedTab/nameallocator.h \
+        src/AdvancedTab/protocal.h \
+        src/AdvancedTab/protocaldataitem.h \
+        src/AdvancedTab/protocalheaderitem.h \
+        src/AdvancedTab/tabadvanced.h \
+        src/AdvancedTab/textinput.h \
+        src/AdvancedTab/vartype.h \
+        src/mainwindow.h \
+        src/SimpleTab/serialsendbox.h \
+        src/SimpleTab/tabcomsimple.h \
+        src/SimpleTab/transfercounter.h \
+        src/AdvancedTab/texttranslator.h
 
 FORMS += \
         mainwindow.ui \
-        "src/Advanced Tab/nameasker.ui"
+        src/AdvancedTab/textinput.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

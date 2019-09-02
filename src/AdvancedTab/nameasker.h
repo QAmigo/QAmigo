@@ -12,7 +12,7 @@ class NameAsker : public QDialog
     Q_OBJECT
 
 public:
-    explicit NameAsker(QWidget *parent = nullptr, QString name = "");
+    explicit NameAsker(QWidget *parent = nullptr, QString name = "", QString regexText = "");
     ~NameAsker();
 
     QString getName();

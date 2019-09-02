@@ -7,8 +7,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    port(new QSerialPort()),
-    decoder(new Decoder(this))
+    port(new QSerialPort())
 {
     ui->setupUi(this);
 
@@ -50,12 +49,14 @@ MainWindow::MainWindow(QWidget *parent) :
     tabAdvanced = new TabAdvanced(this);
     ui->tabMain->addTab(tabAdvanced, "Advanced");
 
+    decoder = new Decoder(this, tabAdvanced->getListProtocals());
+
     connect(ui->buttonOpen, &QPushButton::clicked, this, &MainWindow::openSerial);
 
     connect(tabCOMSimple, &TabCOMSimple::errorMessage, this, &MainWindow::errorMessage);
     connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
     connect(decoder, &Decoder::frameReady, tabAdvanced, &TabAdvanced::frameDataReady);
-    connect(tabAdvanced, &TabAdvanced::sendDecodeParameters, decoder, &Decoder::setDecodeParameters);
+    connect(ui->buttonRefreshPorts, &QPushButton::clicked, this, &MainWindow::onButtonRefreshClicked);
 }
 
 MainWindow::~MainWindow()
@@ -69,6 +70,7 @@ MainWindow::~MainWindow()
 void MainWindow::refreshPorts()
 {
     QList<QSerialPortInfo> infos = QSerialPortInfo::availablePorts();
+    ui->comboPorts->clear();
     for (QSerialPortInfo info : infos)
         ui->comboPorts->addItem(info.portName());
 
@@ -85,6 +87,7 @@ void MainWindow::openSerial()
         if (port->isOpen()) {
             port->close();
             ui->buttonOpen->setText("Open");
+            tabAdvanced->setAllowRunning(false);
         } else {
             port->setPortName(ui->comboPorts->currentText());
             bool ok;
@@ -180,6 +183,7 @@ void MainWindow::openSerial()
             ui->buttonOpen->setText("Close");
 
             decoder->setConnection(port);
+            tabAdvanced->setAllowRunning(true);
         }
     }
 }

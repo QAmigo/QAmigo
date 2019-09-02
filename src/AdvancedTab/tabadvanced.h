@@ -3,19 +3,20 @@
 
 #include <QWidget>
 #include <QPlainTextEdit>
-#include <QListWidget>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGroupBox>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QRegExpValidator>
+#include <QTreeView>
 #include <QLineEdit>
 #include <QLabel>
 
 #include "datavisualizationgraph.h"
 #include "nameallocator.h"
-#include "vartypeitem.h"
+#include "protocal.h"
+#include "vartype.h"
 
 class TabAdvanced : public QWidget
 {
@@ -24,39 +25,46 @@ public:
     explicit TabAdvanced(QWidget *parent = nullptr);
     ~TabAdvanced();
 
+    QList<Protocal *> &getListProtocals() const;
+
+    void setAllowRunning(bool value);
+
 signals:
-    void sendDecodeParameters(const QByteArray header, const QListWidget &types);
+    void onDecodeParametersUpdated(const QList<Protocal *> &listProtocals);
 
 public slots:
-    void frameDataReady(QByteArray array);
+    void frameDataReady(int id, QByteArray array);
 
 private slots:
-    void onButtonAddClicked();
+    void onButtonAddHeaderClicked();
+    void onButtonAddDataClicked();
     void onButtonDeleteClicked();
     void onButtonUpClicked();
     void onButtonDownClicked();
     void onButtonEnableClicked();
     void onRadioLittleBigClicked();
-    void onBoxHeaderTextChanged();
     void onButtonClearLogClicked();
-    void onlistProtocalsDoubleClicked(QListWidgetItem *item);
+    void ontreeProtocalItemChanged(QStandardItem *item);
+    void onGraphUpdate(int currentX);
 
 private:
     void updateDecodeParameters();
+    bool checkIfHeaderExists(QByteArray header);
+    bool checkIfNameExists(QString name);
 
 private:
     QPushButton *buttonEnable;
-    QLabel *labelHeader;
-    QLineEdit *boxHeader;
     QLabel *labelType;
     QComboBox *comboType;
-    QListWidget	*listProtocal;
+    QTreeView *treeProtocals;
     QGroupBox *groupEndianess;
     QRadioButton *radioLittle;
     QRadioButton *radioBig;
+    QList<Protocal *> *listProtocals;
 
     QMutex *mutexAdd;
-    QPushButton *buttonAdd;
+    QPushButton *buttonAddHeader;
+    QPushButton *buttonAddData;
     QPushButton *buttonDelete;
     QPushButton *buttonUp;
     QPushButton *buttonDown;
@@ -71,6 +79,8 @@ private:
 
     NameAllocator *nameAllocator;
     QRegExpValidator *validatorHeader;
+
+    bool allowRunning;
 };
 
 #endif // TABADVANCED_H

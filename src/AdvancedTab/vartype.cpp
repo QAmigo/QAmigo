@@ -1,15 +1,12 @@
-#include "vartypeitem.h"
+#include "vartype.h"
 
-VarTypeItem::VarTypeItem(QString nameType, VAR_TYPE type, QString name) :
-    QListWidgetItem (name + '\t' + nameType),
-    type(type),
-    name(name),
-    series(nullptr)
+VarType::VarType(VAR_TYPE type) :
+    type(type)
 {
 
 }
 
-int VarTypeItem::getSize()
+int VarType::getSize()
 {
     switch (type) {
     case VAR_TYPE::U8 :
@@ -33,17 +30,17 @@ int VarTypeItem::getSize()
     return 0;
 }
 
-void VarTypeItem::setBufferValue(const QByteArray &bufferValue)
+void VarType::setBufferValue(const QByteArray &bufferValue)
 {
     this->bufferValue = bufferValue;
 }
 
-QString VarTypeItem::getName()
+QString VarType::getName()
 {
     return name;
 }
 
-void VarTypeItem::fillValue(uint8_t *p, int byteCount, ENDIANESS endianess)
+void VarType::fillValue(uint8_t *p, int byteCount, ENDIANESS endianess)
 {
     for (int i = 0; i < byteCount; i++) {
         if (endianess == LITTLE)
@@ -53,17 +50,12 @@ void VarTypeItem::fillValue(uint8_t *p, int byteCount, ENDIANESS endianess)
     }
 }
 
-QLineSeries *VarTypeItem::getSeries() const
+VAR_TYPE VarType::getType() const
 {
-    return series;
+    return type;
 }
 
-void VarTypeItem::setSeries(QLineSeries *value)
-{
-    series = value;
-}
-
-double VarTypeItem::getDouble(ENDIANESS endianess)
+double VarType::getDouble(ENDIANESS endianess)
 {
     uint8_t *p;
     switch (type) {

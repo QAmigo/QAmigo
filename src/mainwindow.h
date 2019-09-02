@@ -5,10 +5,10 @@
 #include <QSerialPort>
 #include <QWidget>
 
-#include "Simple Tab/serialsendbox.h"
-#include "Simple Tab/tabcomsimple.h"
-#include "Advanced Tab/tabadvanced.h"
-#include "Advanced Tab/decoder.h"
+#include "SimpleTab/serialsendbox.h"
+#include "SimpleTab/tabcomsimple.h"
+#include "AdvancedTab/tabadvanced.h"
+#include "AdvancedTab/decoder.h"
 
 namespace Ui {
 class MainWindow;

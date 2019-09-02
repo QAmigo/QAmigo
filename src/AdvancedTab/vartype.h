@@ -4,7 +4,6 @@
 #include <QByteArray>
 #include <QString>
 #include <QtCharts>
-#include <QListWidgetItem>
 #include <QLineSeries>
 
 typedef enum {
@@ -23,13 +22,10 @@ typedef enum {
     LITTLE,
 } ENDIANESS;
 
-class VarTypeItem : public QListWidgetItem
+class VarType
 {
 public:
-    VarTypeItem(QString nameType, VAR_TYPE type, QString name);
-
-public:
-    VAR_TYPE type;
+    VarType(VAR_TYPE type);
 
 public:
     int getSize();
@@ -40,6 +36,8 @@ public:
     QLineSeries *getSeries() const;
     void setSeries(QLineSeries *value);
 
+    VAR_TYPE getType() const;
+
 private:
     void fillValue(uint8_t *p, int byteCount, ENDIANESS endianess);
 
@@ -47,7 +45,7 @@ private:
     QByteArray bufferValue;
     double value;
     QString name;
-    QLineSeries *series;
+    VAR_TYPE type;
 };
 
 #endif // VARTYPE_H
