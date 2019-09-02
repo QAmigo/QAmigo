@@ -12,10 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QList<QSerialPortInfo> infos = QSerialPortInfo::availablePorts();
-    for (QSerialPortInfo info : infos)
-        ui->comboPorts->addItem(info.portName());
-
+    refreshPorts();
 
     ui->comboBaudrate->addItem("1200");
     ui->comboBaudrate->addItem("2400");
@@ -59,7 +56,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
     connect(decoder, &Decoder::frameReady, tabAdvanced, &TabAdvanced::frameDataReady);
     connect(tabAdvanced, &TabAdvanced::sendDecodeParameters, decoder, &Decoder::setDecodeParameters);
-
 }
 
 MainWindow::~MainWindow()
@@ -68,6 +64,14 @@ MainWindow::~MainWindow()
         port->close();
     delete port;
     delete ui;
+}
+
+void MainWindow::refreshPorts()
+{
+    QList<QSerialPortInfo> infos = QSerialPortInfo::availablePorts();
+    for (QSerialPortInfo info : infos)
+        ui->comboPorts->addItem(info.portName());
+
 }
 
 void MainWindow::errorMessage(QString str)
@@ -178,4 +182,9 @@ void MainWindow::openSerial()
             decoder->setConnection(port);
         }
     }
+}
+
+void MainWindow::onButtonRefreshClicked()
+{
+    refreshPorts();
 }

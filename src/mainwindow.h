@@ -22,9 +22,15 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private:
+    void refreshPorts();
+
 public slots:
     void errorMessage(QString str);
     void openSerial();
+
+private slots:
+    void onButtonRefreshClicked();
 
 private:
     Ui::MainWindow *ui;
