@@ -32,7 +32,7 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     countLabels(0),
     listDecodedItems(new QList<DecodedItem *>()),
     nameAllocator(new NameAllocator()),
-    validatorHeader(new QRegExpValidator(QRegExp("[0-9a-f]{1,4}")))
+    validatorHeader(new QRegExpValidator(QRegExp("[0-9a-fA-F]{1,4}")))
 {
     QGridLayout *layoutMain = new QGridLayout();
     setLayout(layoutMain);
@@ -64,8 +64,6 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
 
     //QLineEdit boxHeader.
     layoutListControls->addWidget(boxHeader);
-//    QRegExp regexp = QRegExp("[0-9a-f]{1,4}");
-//    validatorHeader = new QRegExpValidator(regexp);
     boxHeader->setValidator(validatorHeader);
     connect(boxHeader, &QLineEdit::textChanged, this, &TabAdvanced::onBoxHeaderTextChanged);
 
