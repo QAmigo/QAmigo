@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "serialsendbox.h"
 
 #include <QMessageBox>
 #include <QtSerialPort/QSerialPortInfo>

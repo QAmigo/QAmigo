@@ -25,29 +25,29 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        datavisualizationgraph.cpp \
-        decodeditem.cpp \
-        decoder.cpp \
-        main.cpp \
-        mainwindow.cpp \
-        nameallocator.cpp \
-        serialsendbox.cpp \
-        tabadvanced.cpp \
-        tabcomsimple.cpp \
-        transfercounter.cpp \
-        vartypeitem.cpp
+        "src/Advanced Tab/tabadvanced.cpp" \
+        "src/Advanced Tab/datavisualizationgraph.cpp" \
+        "src/Advanced Tab/decodeditem.cpp" \
+        "src/Advanced Tab/decoder.cpp" \
+        "src/Advanced Tab/nameallocator.cpp" \
+        "src/Advanced Tab/vartypeitem.cpp" \
+        "src/mainwindow.cpp" \
+        "src/main.cpp" \
+        "src/Simple Tab/serialsendbox.cpp" \
+        "src/Simple Tab/tabcomsimple.cpp" \
+        "src/Simple Tab/transfercounter.cpp"
 
 HEADERS += \
-        datavisualizationgraph.h \
-        decodeditem.h \
-        decoder.h \
-        mainwindow.h \
-        nameallocator.h \
-        serialsendbox.h \
-        tabadvanced.h \
-        tabcomsimple.h \
-        transfercounter.h \
-        vartypeitem.h
+        "src/Advanced Tab/datavisualizationgraph.h" \
+        "src/Advanced Tab/decodeditem.h" \
+        "src/Advanced Tab/decoder.h" \
+        "src/Advanced Tab/nameallocator.h" \
+        "src/Advanced Tab/tabadvanced.h" \
+        "src/Advanced Tab/vartypeitem.h" \
+        "src/mainwindow.h" \
+        "src/Simple Tab/serialsendbox.h" \
+        "src/Simple Tab/tabcomsimple.h" \
+        "src/Simple Tab/transfercounter.h"
 
 FORMS += \
         mainwindow.ui

@@ -5,7 +5,7 @@
 #include <QString>
 #include <QListWidgetItem>
 
-#include <decodeditem.h>
+#include "decodeditem.h"
 
 typedef enum {
     U8,

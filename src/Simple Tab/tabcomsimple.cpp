@@ -1,7 +1,8 @@
+#include "serialsendbox.h"
 #include "tabcomsimple.h"
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <serialsendbox.h>
 #include <QTime>
 
 TabCOMSimple::TabCOMSimple(QWidget *parent,
