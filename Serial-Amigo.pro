@@ -30,6 +30,7 @@ SOURCES += \
         "src/Advanced Tab/decoder.cpp" \
         "src/Advanced Tab/nameallocator.cpp" \
         "src/Advanced Tab/vartypeitem.cpp" \
+        "src/Advanced Tab/nameasker.cpp" \
         "src/mainwindow.cpp" \
         "src/main.cpp" \
         "src/Simple Tab/serialsendbox.cpp" \
@@ -42,13 +43,15 @@ HEADERS += \
         "src/Advanced Tab/nameallocator.h" \
         "src/Advanced Tab/tabadvanced.h" \
         "src/Advanced Tab/vartypeitem.h" \
+        "src/Advanced Tab/nameasker.h" \
         "src/mainwindow.h" \
         "src/Simple Tab/serialsendbox.h" \
         "src/Simple Tab/tabcomsimple.h" \
         "src/Simple Tab/transfercounter.h"
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+        "src/Advanced Tab/nameasker.ui"
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

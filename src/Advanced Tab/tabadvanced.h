@@ -54,6 +54,8 @@ private:
     QGroupBox *groupEndianess;
     QRadioButton *radioLittle;
     QRadioButton *radioBig;
+
+    QMutex *mutexAdd;
     QPushButton *buttonAdd;
     QPushButton *buttonDelete;
     QPushButton *buttonUp;

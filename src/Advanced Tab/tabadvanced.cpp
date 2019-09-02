@@ -1,3 +1,4 @@
+#include "nameasker.h"
 #include "tabadvanced.h"
 #include "vartypeitem.h"
 
@@ -18,6 +19,7 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     groupEndianess(new QGroupBox("Endianess")),
     radioLittle(new QRadioButton("Little")),
     radioBig(new QRadioButton("Big")),
+    mutexAdd(new QMutex()),
     buttonAdd(new QPushButton("Add")),
     buttonDelete(new QPushButton("Delete")),
     buttonUp(new QPushButton("Up")),
@@ -130,10 +132,36 @@ void TabAdvanced::frameDataReady(QByteArray array)
 
 void TabAdvanced::onButtonAddClicked()
 {
-    VarTypeItem *typeItem = new VarTypeItem(comboType->currentText(), static_cast<VAR_TYPE>(comboType->currentData().toInt()), nameAllocator->allocateName());
-    listProtocal->addItem(typeItem);
-    listProtocal->setCurrentRow(listProtocal->count() - 1);
-    updateDecodeParameters();
+    if (mutexAdd->tryLock()) {
+        QString name = nameAllocator->allocateName();
+        NameAsker *ask = new NameAsker(this, name);
+        ask->show();
+        if (ask->exec() == QDialog::Accepted) {
+            if (ask->getName().compare(name) != 0) {
+                nameAllocator->freeName(name);
+                name = ask->getName();
+            }
+
+            if (name.count() != 0) {
+                //If the name is already used.
+                for (int i = 0; i < listProtocal->count(); i++) {
+                    VarTypeItem *item = static_cast<VarTypeItem *>(listProtocal->itemAt(i, 0));
+                    if (item->getName().compare(name) == 0) {
+                        QMessageBox::warning(this, "Name used.", "This name has already been used.");
+                        mutexAdd->unlock();
+                        return;
+                    }
+                }
+                VarTypeItem *typeItem = new VarTypeItem(comboType->currentText(), static_cast<VAR_TYPE>(comboType->currentData().toInt()), name);
+                listProtocal->addItem(typeItem);
+                listProtocal->setCurrentRow(listProtocal->count() - 1);
+                updateDecodeParameters();
+            }
+        } else {
+            nameAllocator->freeName(name);
+        }
+        mutexAdd->unlock();
+    }
 }
 
 void TabAdvanced::onButtonDeleteClicked()

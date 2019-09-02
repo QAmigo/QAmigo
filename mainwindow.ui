@@ -143,6 +143,19 @@
          </item>
         </layout>
        </widget>
+       <widget class="QPushButton" name="buttonRefreshPorts">
+        <property name="geometry">
+         <rect>
+          <x>250</x>
+          <y>30</y>
+          <width>89</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Refresh</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -154,7 +167,7 @@
      <x>0</x>
      <y>0</y>
      <width>1012</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
