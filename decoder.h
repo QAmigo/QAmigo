@@ -15,6 +15,7 @@ class Decoder : public QObject
 
 public:
     Decoder(QObject *object);
+    ~Decoder();
 
 signals:
     void frameReady(const QByteArray &array);		//Sends one ready frame out.

@@ -3,7 +3,6 @@
 
 #include <QGridLayout>
 #include <QHBoxLayout>
-#include <QRegExpValidator>
 #include <QVBoxLayout>
 #include <QSpacerItem>
 
@@ -17,7 +16,6 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     labelType(new QLabel("Var Type")),
     comboType(new QComboBox()),
     listProtocal(new QListWidget()),
-    checkCRC(new QCheckBox()),
     groupEndianess(new QGroupBox("Endianess")),
     radioLittle(new QRadioButton("Little")),
     radioBig(new QRadioButton("Big")),
@@ -33,7 +31,8 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     layoutLabels(new QGridLayout()),
     countLabels(0),
     listDecodedItems(new QList<DecodedItem *>()),
-    nameAllocator(new NameAllocator())
+    nameAllocator(new NameAllocator()),
+    validatorHeader(new QRegExpValidator(QRegExp("[0-9a-f]{1,4}")))
 {
     QGridLayout *layoutMain = new QGridLayout();
     setLayout(layoutMain);
@@ -56,15 +55,17 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     comboType->addItem("double", VAR_TYPE::Double);
 
     layoutList->addWidget(listProtocal);
+
     QVBoxLayout *layoutListControls = new QVBoxLayout();
     layoutList->addLayout(layoutListControls);
     layoutListControls->addWidget(buttonEnable);
+
     layoutListControls->addWidget(labelHeader);
 
     //QLineEdit boxHeader.
     layoutListControls->addWidget(boxHeader);
-    QRegExp *regexp = new QRegExp("[0-9a-f]{1,4}");
-    QRegExpValidator *validatorHeader = new QRegExpValidator(*regexp);
+//    QRegExp regexp = QRegExp("[0-9a-f]{1,4}");
+//    validatorHeader = new QRegExpValidator(regexp);
     boxHeader->setValidator(validatorHeader);
     connect(boxHeader, &QLineEdit::textChanged, this, &TabAdvanced::onBoxHeaderTextChanged);
 
@@ -99,6 +100,13 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     layoutLog->addLayout(layoutLogControls);
     layoutLogControls->addWidget(buttonClearLog);
     connect(buttonClearLog, &QPushButton::clicked, this, &TabAdvanced::onButtonClearLogClicked);
+}
+
+TabAdvanced::~TabAdvanced()
+{
+    delete listDecodedItems;
+    delete nameAllocator;
+    delete validatorHeader;
 }
 
 void TabAdvanced::frameDataReady(QByteArray array)

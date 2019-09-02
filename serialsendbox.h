@@ -18,6 +18,8 @@ class SerialSendBox : public QWidget
     Q_OBJECT
 public:
     explicit SerialSendBox(QWidget *parent = nullptr, QSerialPort *port = nullptr);
+    // Is this because I overrided timerEvent so a default destructor is generated?
+    ~SerialSendBox() override;
 
 signals:
     void errorSend(QString string);

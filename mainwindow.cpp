@@ -67,6 +67,7 @@ MainWindow::~MainWindow()
 {
     if (port->isOpen())
         port->close();
+    delete port;
     delete ui;
 }
 

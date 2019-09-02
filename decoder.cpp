@@ -7,6 +7,11 @@ Decoder::Decoder(QObject *object) :
 {
 }
 
+Decoder::~Decoder()
+{
+    delete listType;
+}
+
 void Decoder::setConnection(QIODevice *connection)
 {
     connect(connection, &QIODevice::readyRead, this, &Decoder::dataReady);

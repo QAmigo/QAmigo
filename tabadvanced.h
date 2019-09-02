@@ -9,6 +9,7 @@
 #include <QGroupBox>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QRegExpValidator>
 #include <QLineEdit>
 #include <QLabel>
 
@@ -22,6 +23,7 @@ class TabAdvanced : public QWidget
     Q_OBJECT
 public:
     explicit TabAdvanced(QWidget *parent = nullptr);
+    ~TabAdvanced();
 
 signals:
     void sendDecodeParameters(const QByteArray header, const QListWidget &types);
@@ -50,7 +52,6 @@ private:
     QLabel *labelType;
     QComboBox *comboType;
     QListWidget	*listProtocal;
-    QCheckBox *checkCRC;
     QGroupBox *groupEndianess;
     QRadioButton *radioLittle;
     QRadioButton *radioBig;
@@ -72,6 +73,7 @@ private:
     QList<DecodedItem *> *listDecodedItems;
 
     NameAllocator *nameAllocator;
+    QRegExpValidator *validatorHeader;
 };
 
 #endif // TABADVANCED_H

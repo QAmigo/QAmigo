@@ -10,8 +10,8 @@ TabCOMSimple::TabCOMSimple(QWidget *parent,
     radioReceiveHex(new QRadioButton("Hex")),
     radioReceiveASC(new QRadioButton("ASC")),
     buttonReceiveClear(new QPushButton("Clear All")),
-    counterRX(new TransferCounter(parent, new QString("RX"))),
-    counterTX(new TransferCounter(parent, new QString("TX")))
+    counterRX(new TransferCounter(parent, QString("RX"))),
+    counterTX(new TransferCounter(parent, QString("TX")))
 {
     radioReceiveASC->setChecked(true);
 
@@ -42,6 +42,12 @@ TabCOMSimple::TabCOMSimple(QWidget *parent,
     }
 
     connect(buttonReceiveClear, &QPushButton::clicked, this, &TabCOMSimple::onButtonReceiveClearClicked);
+}
+
+TabCOMSimple::~TabCOMSimple()
+{
+    delete counterRX;
+    delete counterTX;
 }
 
 void TabCOMSimple::rawDataReady(const QByteArray &array)

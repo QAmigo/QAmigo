@@ -29,6 +29,8 @@ const QString name_pool[COUNT_NAME] = {
 
 NameAllocator::NameAllocator()
 {
+    for (int i = 0; i < COUNT_NAME; i++)
+        usageTable[i] = false;
 }
 
 QString NameAllocator::allocateName()

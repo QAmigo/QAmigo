@@ -1,9 +1,9 @@
 #include "transfercounter.h"
 
-TransferCounter::TransferCounter(QWidget *parent, QString *name) :
+TransferCounter::TransferCounter(QWidget *parent, QString name) :
     QWidget(parent),
     layout(new QHBoxLayout()),
-    labelName(new QLabel(*name)),
+    labelName(new QLabel(name)),
     countAll(0),
     labelCount(new QLabel("0"))
 {

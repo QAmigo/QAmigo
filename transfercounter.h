@@ -9,7 +9,7 @@ class TransferCounter : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TransferCounter(QWidget *parent = nullptr, QString *name = nullptr);
+    explicit TransferCounter(QWidget *parent = nullptr, QString name = "");
 
 signals:
 

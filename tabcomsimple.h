@@ -16,6 +16,7 @@ class TabCOMSimple : public QWidget
 public:
     explicit TabCOMSimple(QWidget *parent = nullptr,
                           QSerialPort *port = nullptr);
+    ~TabCOMSimple();
 
 signals:
     void errorMessage(QString string);

@@ -46,6 +46,11 @@ SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(paren
     connect(spinTimer, QOverload<int>::of(&QSpinBox::valueChanged), this, &SerialSendBox::onSpinTimerValueChanged);
 }
 
+SerialSendBox::~SerialSendBox()
+{
+    delete timer;
+}
+
 int8_t SerialSendBox::toHex(char data)
 {
     if (data <= '9' && data >= '0')

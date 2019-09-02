@@ -7,6 +7,9 @@ DataVisualizationGraph::DataVisualizationGraph(QWidget *parent) : QWidget(parent
     graph(new QGraphicsView()),
     buttonClearGraph(new QPushButton("Clear")),
     chart(new QChart()),
+    currentX(0),
+    max(0),
+    min(0),
     listSeries(new QList<QLineSeries *>()),
     chartWidth(100)
 {
@@ -20,6 +23,11 @@ DataVisualizationGraph::DataVisualizationGraph(QWidget *parent) : QWidget(parent
     layout->addLayout(layoutControls);
     layoutControls->addWidget(buttonClearGraph);
     connect(buttonClearGraph, &QPushButton::clicked, this, &DataVisualizationGraph::onButtonClearClicked);
+}
+
+DataVisualizationGraph::~DataVisualizationGraph()
+{
+    delete listSeries;
 }
 
 void DataVisualizationGraph::appendData(const QList<double> &data)

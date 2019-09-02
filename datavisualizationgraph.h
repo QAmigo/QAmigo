@@ -11,6 +11,7 @@ class DataVisualizationGraph : public QWidget
     Q_OBJECT
 public:
     explicit DataVisualizationGraph(QWidget *parent = nullptr);
+    ~DataVisualizationGraph();
 
 signals:
 
