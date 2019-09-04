@@ -14,7 +14,7 @@ Like 0xAAAA for the frame header, 0x01 for function byte to indicate what this f
 
 ## Download
 
-Download it at [release page](https://github.com/cybertale/QSerial-Socket-Amigo/releases/tag/v1.0).
+Download it at [release page](https://github.com/cybertale/QSerial-Socket-Amigo/releases).
 
 ## Compile
 
@@ -38,11 +38,21 @@ Repeat send will automatically start when the checkbox is checked.
 
 Advanced read means basic decoding of the income data with custom protocal and shows it on some specific chart.
 
-(TODO: here I think maybe we should support multiple frame headers.)
+**Firstly**, Using "Add Header" and "Add Data" button to add frame protocol settings, notice that we have to add header first data(means type data) are child nodes of the frame headers.
 
-**Firstly**, Set the frame header, 0xAAAA is the default frame header.
+When we click the "Add header" button, the tool will ask for a hex byte array to be frame header:
 
-**Secondly**, Add some variables to be decoded after the frame header. Select variable type and click add to add.
+![](doc/images/Add%20Header.png)
+
+**Secondly**, Add some variables to be decoded after the frame header. Select variable type and the frame to add then click add to add.
+
+Adding data needs us to select one header or data, the new type data will append to the frame we are selecting to.
+
+The following two ways of selection will all add the new type data to the first frame, the one with header "0xAAAA".
+
+![](doc/images/Add%20Data%20Select%20Header.png)
+
+![](doc/images/Add%20Data%20Select%20Data.png)
 
 **Thirdly**, Select the endianess the protocal uses.
 
@@ -56,17 +66,31 @@ Also this tab can be enabled both before and after the connection is opened.
 
 **Example** To decode data of an IMU module
 
-Here I got an IMU module keeps sending me its angles from serial. It sends me 3 `int16_t` data representing results for `angle / 180.0 * 65535` for roll, pitch, yaw. Frame of its data is composed of these following bytes:
+Here I got an IMU module keeps sending me its angles, angular velocity and angular acceleration from serial. It sends me 3 kinds of frames, each of them are started with two bytes header, 0x5553, 0x5552, 0x5551, respectively. Three `int16_t` datas follows the header in each frame, represents their value.
+
+For example, in angle frame, each of the `int16_t ` value represents results for `angle / 180.0 * 65535` for roll, pitch, yaw. 
+
+Frame of their data is composed of these following bytes:
+
+**Accelerometer**
+
+[0x55][0x51][Lower byte of roll][Higher byte of roll][Lower byte of pitch][Higher byte of pitch][Lower byte of yaw][Higher byte of yaw]
+
+**Angular velocity**
+
+[0x55][0x52][Lower byte of roll][Higher byte of roll][Lower byte of pitch][Higher byte of pitch][Lower byte of yaw][Higher byte of yaw]
+
+**Angle**
 
 [0x55][0x53][Lower byte of roll][Higher byte of roll][Lower byte of pitch][Higher byte of pitch][Lower byte of yaw][Higher byte of yaw]
 
-Which means it sends 3 `int16_t` data after frame header with little endianess. So the tool should be configured as fowllows:
-
-![](doc/images/Advanced%20Configuration.png)
-
-It will automatically allocates some name for the variables and generate checkboxes on the right, click the checkbox will draw it on the chart on the bottom right of the window.
+To decode these frames on one serial, we can configure our tool like this:
 
 ![](doc/images/Data%20in%20chart.png)
+
+Log area on the right will show the value it decodes, number in the beginning represents the frame index.
+
+Checkbox in front of the data line is for drawing data in chart, just check the data you want to plot and have some fun!
 
 ## About
 
