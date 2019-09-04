@@ -15,6 +15,8 @@
 
 TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     buttonEnable(new QPushButton("Enable")),
+    buttonLoad(new QPushButton("Load Settings")),
+    buttonSave(new QPushButton("Save Settings")),
     labelType(new QLabel("Var Type")),
     comboType(new QComboBox()),
     treeProtocals(new QTreeView()),
@@ -69,6 +71,11 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     QVBoxLayout *layoutListControls = new QVBoxLayout();
     layoutList->addLayout(layoutListControls);
     layoutListControls->addWidget(buttonEnable);
+    layoutListControls->addWidget(buttonLoad);
+    layoutListControls->addWidget(buttonSave);
+
+    connect(buttonLoad, &QPushButton::clicked, this, &TabAdvanced::onButtonLoadSettingsClicked);
+    connect(buttonSave, &QPushButton::clicked, this, &TabAdvanced::onButtonSaveSettingsClicked);
 
     layoutListControls->addWidget(groupEndianess);
     QVBoxLayout *layoutEndianess = new QVBoxLayout();
@@ -346,6 +353,59 @@ void TabAdvanced::onButtonEnableClicked()
     } else {
         buttonEnable->setText("Enable");
         enabled = false;
+    }
+}
+
+void TabAdvanced::onButtonLoadSettingsClicked()
+{
+}
+
+void TabAdvanced::onButtonSaveSettingsClicked()
+{
+    QString folderString = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QSerial Socket Amigo";
+    QFileInfo folder(folderString);
+    if (!folder.exists())
+        QDir().mkdir(folderString);
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+                tr("Save Protocal Settings"),
+                folderString,
+                tr("JSON (*.json)"));
+    if (fileName.isEmpty()) {
+        return;
+    } else {
+        if (fileName.right(5).toLower().compare(".json") != 0)
+            fileName.append(".json");
+
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::warning(this, "Error", "File open failed.");
+            return;
+        }
+
+        QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
+        QJsonObject object = QJsonObject();
+        for (int i = 0; i < model->rowCount(); i++) {
+            ProtocalHeaderItem *header = static_cast<ProtocalHeaderItem *>(model->item(i));
+            QJsonObject frameObject = QJsonObject();
+            frameObject["header"] = QString(header->getHeader().toHex()).toUpper();
+            QJsonArray types = QJsonArray();
+            for (int j = 0; j < header->rowCount(); j++) {
+                ProtocalDataItem *data = static_cast<ProtocalDataItem *>(header->child(j));
+                QJsonObject type = QJsonObject();
+                type["name"] = header->child(j, 1)->text();
+                type["type"] = data->getType();
+                types.append(type);
+            }
+            frameObject["types"] = types;
+            object[QString(char(i))] = frameObject;
+        }
+
+        QJsonDocument saveDoc(object);
+
+        file.write(saveDoc.toJson());
+
+        file.close();
     }
 }
 

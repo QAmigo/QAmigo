@@ -42,6 +42,8 @@ private slots:
     void onButtonUpClicked();
     void onButtonDownClicked();
     void onButtonEnableClicked();
+    void onButtonLoadSettingsClicked();
+    void onButtonSaveSettingsClicked();
     void onRadioLittleBigClicked();
     void onButtonClearLogClicked();
     void ontreeProtocalItemChanged(QStandardItem *item);
@@ -54,6 +56,8 @@ private:
 
 private:
     QPushButton *buttonEnable;
+    QPushButton *buttonLoad;
+    QPushButton *buttonSave;
     QLabel *labelType;
     QComboBox *comboType;
     QTreeView *treeProtocals;
