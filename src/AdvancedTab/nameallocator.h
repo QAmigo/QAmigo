@@ -11,6 +11,10 @@ public:
 
     QString allocateName();
     void freeName(QString name);
+    void setNameUsed(QString name);
+
+private:
+    int idFromName(QString name);
 
 private:
     bool usageTable[COUNT_NAME];

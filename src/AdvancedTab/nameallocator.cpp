@@ -49,13 +49,24 @@ QString NameAllocator::allocateName()
 
 void NameAllocator::freeName(QString name)
 {
-    int i = 0;
-    while (i < COUNT_NAME) {
-        if (usageTable[i] == true)
-            if (name.compare(name_pool[i]) == 0) {
-                usageTable[i] = false;
-                return;
-            }
-        i++;
+    int id;
+    if ((id = idFromName(name)) != -1)
+        usageTable[id] = false;
+}
+
+void NameAllocator::setNameUsed(QString name)
+{
+    int id;
+    if ((id = idFromName(name)) != -1)
+        usageTable[id] = true;
+}
+
+int NameAllocator::idFromName(QString name)
+{
+    for (int i = 0; i < COUNT_NAME; i++) {
+        if (name_pool[i].compare(name) == 0)
+            return i;
     }
+
+    return -1;
 }
