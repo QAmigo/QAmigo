@@ -40,11 +40,6 @@ void DataVisualizationGraph::updateAxis(double value)
         min = value;
         chart->axes(Qt::Vertical).first()->setMin(min * 1.2);
     }
-//    if (x > currentX) {
-//        currentX = x;
-//        if (currentX > 100)
-//            chart->axes(Qt::Horizontal).first()->setRange(currentX - 100, currentX);
-//    }
 }
 
 QLineSeries *DataVisualizationGraph::createSeries(QString name)
@@ -115,9 +110,4 @@ void DataVisualizationGraph::timerEvent(QTimerEvent *event)
         }
     } else
         QWidget::timerEvent(event);
-}
-
-int DataVisualizationGraph::getCurrentX() const
-{
-    return currentX;
 }

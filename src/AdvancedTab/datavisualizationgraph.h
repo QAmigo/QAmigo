@@ -23,8 +23,6 @@ public:
     void removeSeries(QLineSeries *series);
     void updateAxis(double value);
 
-    int getCurrentX() const;
-
     void setAllowRunning(bool value);
 
 public slots:

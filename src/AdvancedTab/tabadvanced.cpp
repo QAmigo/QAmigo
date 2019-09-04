@@ -133,21 +133,6 @@ void TabAdvanced::frameDataReady(int id, QByteArray array)
         }
         if (bufferShow.count() != 0)
             boxLog->appendPlainText(bufferShow);
-//        int count = 0;
-//        QList<double> list;
-//        for (int i = 0; i < treeProtocals->count(); i++) {
-//            VarTypeItem *item = static_cast<VarTypeItem *>(treeProtocals->item(i));
-//            item->setBufferValue(array.mid(count, item->getSize()));
-//            count += item->getSize();
-//            double val = item->getDouble(endianess);
-//            bufferShow.append(QString().sprintf("%4.2lf ", val));
-//            if (item->getSeries() != nullptr)
-//                list.append(val);
-//        }
-//        if (list.count() != 0)
-//            graph->appendData(list);
-//        if (bufferShow.count() != 0)
-//            boxLog->appendPlainText(bufferShow);
     }
 }
 
