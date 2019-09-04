@@ -174,6 +174,25 @@ void TabAdvanced::setAllowRunning(bool value)
     graph->setAllowRunning(allowRunning);
 }
 
+void TabAdvanced::addHeader(QByteArray header)
+{
+    QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
+    QList<QStandardItem *> list;
+    list.append(new ProtocalHeaderItem(header));
+    list.append(new QStandardItem());
+
+    model->appendRow(list);
+    QItemSelectionModel *selectionModel = treeProtocals->selectionModel();
+    int count = model->rowCount();
+    QModelIndex indexLast = model->index(count - 1, 0, QModelIndex());
+    selectionModel->select(indexLast,
+       QItemSelectionModel::SelectionFlag::ClearAndSelect |
+       QItemSelectionModel::SelectionFlag::Rows);
+    selectionModel->setCurrentIndex(indexLast,
+        QItemSelectionModel::SelectionFlag::Current);
+
+}
+
 void TabAdvanced::onButtonAddHeaderClicked()
 {
     TextInput *input = new TextInput(this, "AAAA", "[0-9a-fA-F]+");
@@ -184,22 +203,38 @@ void TabAdvanced::onButtonAddHeaderClicked()
         if (checkIfHeaderExists(header)) {
             QMessageBox::warning(this, "Error", "Header already exists.");
         } else {
-            QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
-            QList<QStandardItem *> list;
-            list.append(new ProtocalHeaderItem(QByteArray(header)));
-            list.append(new QStandardItem());
-
-            model->appendRow(list);
-            QItemSelectionModel *selectionModel = treeProtocals->selectionModel();
-            int count = model->rowCount();
-            QModelIndex indexLast = model->index(count - 1, 0, QModelIndex());
-            selectionModel->select(indexLast,
-                   QItemSelectionModel::SelectionFlag::ClearAndSelect |
-                   QItemSelectionModel::SelectionFlag::Rows);
-            selectionModel->setCurrentIndex(indexLast,
-                    QItemSelectionModel::SelectionFlag::Current);
+            addHeader(header);
         }
     }
+}
+
+//index of combo is corresponding to the index of type declared in VAR_TYPE.
+void TabAdvanced::addData(QModelIndex index, QString name, int indexType)
+{
+    QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
+    QList<QStandardItem *> list;
+    VAR_TYPE type = static_cast<VAR_TYPE>(comboType->itemData(indexType).toInt());
+    list.append(new ProtocalDataItem(type, comboType->itemText(indexType)));
+    list.append(new QStandardItem(name));
+    QModelIndex indexLast;
+    if (index.parent().isValid()) {
+        model->itemFromIndex(index)->parent()->appendRow(list);
+        //Calculate the index of the last element.
+        int count = model->itemFromIndex(index)->parent()->rowCount();
+        indexLast = index.siblingAtRow(count - 1);
+    }
+    else {
+        model->itemFromIndex(index.siblingAtColumn(0))->appendRow(list);
+        int count = model->itemFromIndex(index)->rowCount();
+        indexLast = model->index(count - 1, 0, index);
+    }
+    QItemSelectionModel *selectionModel = treeProtocals->selectionModel();
+    selectionModel->select(indexLast,
+       QItemSelectionModel::SelectionFlag::ClearAndSelect |
+       QItemSelectionModel::SelectionFlag::Rows);
+    selectionModel->setCurrentIndex(indexLast,
+        QItemSelectionModel::SelectionFlag::Current);
+    updateDecodeParameters();
 }
 
 void TabAdvanced::onButtonAddDataClicked()
@@ -219,29 +254,7 @@ void TabAdvanced::onButtonAddDataClicked()
                 QMessageBox::warning(this, "Error", "Name already exists.");
                 return;
             }
-            QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
-            QList<QStandardItem *> list;
-            VAR_TYPE type = static_cast<VAR_TYPE>(comboType->currentData().toInt());
-            list.append(new ProtocalDataItem(type, comboType->currentText()));
-            list.append(new QStandardItem(name));
-            QModelIndex indexLast;
-            if (index.parent().isValid()) {
-                model->itemFromIndex(index)->parent()->appendRow(list);
-                //Calculate the index of the last element.
-                int count = model->itemFromIndex(index)->parent()->rowCount();
-                indexLast = index.siblingAtRow(count - 1);
-            }
-            else {
-                model->itemFromIndex(index.siblingAtColumn(0))->appendRow(list);
-                int count = model->itemFromIndex(index)->rowCount();
-                indexLast = model->index(count - 1, 0, index);
-            }
-            selectionModel->select(indexLast,
-                   QItemSelectionModel::SelectionFlag::ClearAndSelect |
-                   QItemSelectionModel::SelectionFlag::Rows);
-            selectionModel->setCurrentIndex(indexLast,
-                    QItemSelectionModel::SelectionFlag::Current);
-            updateDecodeParameters();
+            addData(index, name, comboType->currentIndex());
         } else
             nameAllocator->freeName(allocatedName);
     }
@@ -358,6 +371,44 @@ void TabAdvanced::onButtonEnableClicked()
 
 void TabAdvanced::onButtonLoadSettingsClicked()
 {
+    QString folderString = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QSerial Socket Amigo";
+    QFileInfo folder(folderString);
+    if (!folder.exists())
+        QDir().mkdir(folderString);
+
+    QString fileName = QFileDialog::getOpenFileName(this,
+                tr("Open Protocal Settings"),
+                folderString,
+                tr("JSON (*.json)"));
+    if (fileName.isEmpty()) {
+        return;
+    } else {
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly)) {
+            QMessageBox::warning(this, "Error", "File open failed.");
+            return;
+        }
+
+        QByteArray saveData = file.readAll();
+        QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+        QJsonObject object = loadDoc.object();
+        for (int i = 0; i < object.keys().count(); i++) {
+            QJsonObject frameObject = object[QString(i)].toObject();
+            TextTranslator translator(frameObject["header"].toString());
+            addHeader(translator.toHex());
+            QJsonArray types = frameObject["types"].toArray();
+            for (int j = 0; j < types.count(); j++) {
+                QJsonObject type = types.at(j).toObject();
+                QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
+                QModelIndex index = model->index(model->rowCount() - 1, 0);
+                QString name = type["name"].toString();
+                nameAllocator->setNameUsed(name);
+                addData(index, name, type["type"].toInt());
+            }
+        }
+        file.close();
+    }
+
 }
 
 void TabAdvanced::onButtonSaveSettingsClicked()
@@ -398,7 +449,7 @@ void TabAdvanced::onButtonSaveSettingsClicked()
                 types.append(type);
             }
             frameObject["types"] = types;
-            object[QString(char(i))] = frameObject;
+            object[QString(i)] = frameObject;
         }
 
         QJsonDocument saveDoc(object);

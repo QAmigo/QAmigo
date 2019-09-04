@@ -85,6 +85,8 @@ private:
     QRegExpValidator *validatorHeader;
 
     bool allowRunning;
+    void addHeader(QByteArray header);
+    void addData(QModelIndex index, QString name, int indexType);
 };
 
 #endif // TABADVANCED_H
