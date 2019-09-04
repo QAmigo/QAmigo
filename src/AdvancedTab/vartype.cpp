@@ -88,7 +88,7 @@ double VarType::getDouble(ENDIANESS endianess)
         float f;
         p = reinterpret_cast<uint8_t *>(&f);
         fillValue(p, 4, endianess);
-        return static_cast<float>(f);
+        return static_cast<double>(f);
     case VAR_TYPE::Double :
         //Assume double is 64-bit now.
         double d;
