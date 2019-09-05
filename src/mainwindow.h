@@ -7,6 +7,7 @@
 
 #include "SimpleTab/serialsendbox.h"
 #include "SimpleTab/tabcomsimple.h"
+#include "tabplugininterface.h"
 #include "AdvancedTab/tabadvanced.h"
 #include "AdvancedTab/decoder.h"
 
@@ -24,6 +25,7 @@ public:
 
 private:
     void refreshPorts();
+    void updatePluginConnection();
 
 public slots:
     void errorMessage(QString str);
@@ -31,14 +33,18 @@ public slots:
 
 private slots:
     void onButtonRefreshClicked();
+    void onLoadPluginTriggered();
+    void onDecodedDataReady(int id, QList<double> listValues);
 
 private:
     Ui::MainWindow *ui;
     SerialSendBox *sendBox;
+    QIODevice *currentConnection;
     QSerialPort *port;
     TabCOMSimple *tabCOMSimple;
     TabAdvanced *tabAdvanced;
     Decoder *decoder;
+    QList<TabPluginInterface *> listPlugins;
 };
 
 #endif // MAINWINDOW_H

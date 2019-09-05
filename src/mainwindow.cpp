@@ -7,7 +7,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    port(new QSerialPort())
+    port(new QSerialPort()),
+    listPlugins(QList<TabPluginInterface *>())
 {
     ui->setupUi(this);
 
@@ -57,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
     connect(decoder, &Decoder::frameReady, tabAdvanced, &TabAdvanced::frameDataReady);
     connect(ui->buttonRefreshPorts, &QPushButton::clicked, this, &MainWindow::onButtonRefreshClicked);
+    connect(ui->actionLoad_Plugin, &QAction::triggered, this, &MainWindow::onLoadPluginTriggered);
+    connect(tabAdvanced, &TabAdvanced::onDecodedDataReady, this, &MainWindow::onDecodedDataReady);
 }
 
 MainWindow::~MainWindow()
@@ -184,6 +187,7 @@ void MainWindow::openSerial()
 
             decoder->setConnection(port);
             tabAdvanced->setAllowRunning(true);
+            currentConnection = port;
         }
     }
 }
@@ -191,4 +195,52 @@ void MainWindow::openSerial()
 void MainWindow::onButtonRefreshClicked()
 {
     refreshPorts();
+}
+
+void MainWindow::onLoadPluginTriggered()
+{
+    QString pluginsFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QSerial Socket Amigo/plugins";
+
+    QString type = tr("Dynamic Linked Library");
+#if defined(Q_OS_WIN)
+    type.append(" (*.dll)");
+#elif defined (Q_OS_LINUX)
+    type.append(" (*.so)");
+#else
+    //Not supporting Mac.
+    Q_ASSERT(false);
+#endif
+
+    QString fileName = QFileDialog::getOpenFileName(this,
+        tr("Select Plugin to Load"),
+        pluginsFolder,
+        type);
+    if (fileName.isEmpty())
+        return;
+    else {
+        QPluginLoader loader(fileName);
+        QObject *pluginObject = loader.instance();
+        if (pluginObject) {
+            TabPluginInterface *plugin = qobject_cast<TabPluginInterface *>(pluginObject);
+            plugin->setConnection(currentConnection);
+            listPlugins.append(plugin);
+            QWidget *widget = new QWidget();
+            widget->setLayout(plugin->getLayout());
+            ui->tabMain->addTab(widget, plugin->getName());
+            ui->tabMain->setCurrentIndex(ui->tabMain->count() - 1);
+        } else
+            QMessageBox::warning(this, "error", "plugin read error");
+    }
+}
+
+void MainWindow::onDecodedDataReady(int id, QList<double> listValues)
+{
+    for (auto plugin : listPlugins)
+        plugin->onFrameUpdated(id, listValues);
+}
+
+void MainWindow::updatePluginConnection()
+{
+    for (auto plugin : listPlugins)
+        plugin->setConnection(currentConnection);
 }

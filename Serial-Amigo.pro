@@ -55,7 +55,8 @@ HEADERS += \
         src/SimpleTab/serialsendbox.h \
         src/SimpleTab/tabcomsimple.h \
         src/SimpleTab/transfercounter.h \
-        src/AdvancedTab/texttranslator.h
+        src/AdvancedTab/texttranslator.h \
+        src/tabplugininterface.h
 
 FORMS += \
         mainwindow.ui \
