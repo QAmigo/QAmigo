@@ -124,6 +124,7 @@ void TabAdvanced::frameDataReady(int id, QByteArray array)
     if (enabled) {
         Protocal *protocal = listProtocals->at(id);
         QList<VarType *> *listData = protocal->getListData();
+        //Prepare data to send to plugins.
         QList<double> listValues;
         int count = 0;
         for (int i = 0; i < listData->count(); i++) {
@@ -139,8 +140,8 @@ void TabAdvanced::frameDataReady(int id, QByteArray array)
                 item->setCurrentValue(value);
             }
             listValues.append(value);
-            emit onDecodedDataReady(id, listValues);
         }
+        emit onDecodedDataReady(id, listValues);
         if (bufferShow.count() != 0)
             boxLog->appendPlainText(bufferShow);
     }
