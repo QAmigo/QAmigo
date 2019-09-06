@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -26,6 +26,8 @@ public:
 private:
     void refreshPorts();
     void updatePluginConnection();
+    void translateTo(QString locale);
+    void retranslateUi();
 
 public slots:
     void errorMessage(QString str);
@@ -35,6 +37,8 @@ private slots:
     void onButtonRefreshClicked();
     void onLoadPluginTriggered();
     void onDecodedDataReady(int id, QList<double> listValues);
+    void onActionEnglishTriggered();
+    void onActionChineseTriggered();
 
 private:
     Ui::MainWindow *ui;
@@ -45,6 +49,11 @@ private:
     TabAdvanced *tabAdvanced;
     Decoder *decoder;
     QList<TabPluginInterface *> listPlugins;
+    QTranslator *translator;
+
+    // QWidget interface
+protected:
+    void changeEvent(QEvent *event) override;
 };
 
 #endif // MAINWINDOW_H

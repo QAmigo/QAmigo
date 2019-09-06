@@ -1,4 +1,4 @@
-#ifndef DATAVISUALIZATIONGRAPH_H
+﻿#ifndef DATAVISUALIZATIONGRAPH_H
 #define DATAVISUALIZATIONGRAPH_H
 
 #include <QBasicTimer>
@@ -29,6 +29,7 @@ public slots:
 
 private slots:
     void onButtonClearClicked();
+    void retranslateUi();
 
 private:
     QGraphicsView *graph;
@@ -45,6 +46,10 @@ private:
     // QObject interface
 protected:
     void timerEvent(QTimerEvent *event) override;
+
+    // QWidget interface
+protected:
+    void changeEvent(QEvent *event) override;
 };
 
 #endif // DATAVISUALIZATIONGRAPH_H

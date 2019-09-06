@@ -18,6 +18,9 @@ public:
                           QSerialPort *port = nullptr);
     ~TabCOMSimple();
 
+private:
+    void retranslateUi();
+
 signals:
     void errorMessage(QString string);
 
@@ -36,6 +39,10 @@ private:
     QPushButton *buttonReceiveClear;
     TransferCounter *counterRX;
     TransferCounter *counterTX;
+
+    // QWidget interface
+protected:
+    void changeEvent(QEvent *event);
 };
 
 #endif // TABCOMSIMPLE_H

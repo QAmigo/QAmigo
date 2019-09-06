@@ -1,4 +1,4 @@
-#ifndef SERIALSENDBOX_H
+﻿#ifndef SERIALSENDBOX_H
 #define SERIALSENDBOX_H
 
 #include <QBasicTimer>
@@ -6,10 +6,10 @@
 #include <QLabel>
 #include <QSpinBox>
 #include <QWidget>
-#include <QtWidgets/QPlainTextEdit>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QRadioButton>
-#include <QtWidgets/QGroupBox>
+#include <QPlainTextEdit>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QGroupBox>
 #include <QSerialPort>
 #include <array>
 
@@ -28,6 +28,7 @@ signals:
 private:
     char parseHex(QByteArray *array);
     int8_t toHex(char data);
+    void retranslateUi();
 
 private slots:
     void on_buttonSend_clicked();
@@ -51,6 +52,10 @@ private:
     // QObject interface
 protected:
     void timerEvent(QTimerEvent *event) override;
+
+    // QWidget interface
+protected:
+    void changeEvent(QEvent *event) override;
 };
 
 #endif // SERIALSENDBOX_H

@@ -24,3 +24,8 @@ void TransferCounter::clear()
     labelCount->setText("0");
 }
 
+void TransferCounter::setLabelText(QString text)
+{
+    labelName->setText(text);
+}
+

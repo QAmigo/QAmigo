@@ -18,7 +18,14 @@ public:
     QString getText();
 
 private:
+    void retranslateUi();
+
+private:
     Ui::TextInput *ui;
+
+    // QWidget interface
+protected:
+    void changeEvent(QEvent *event);
 };
 
 #endif // NAMEASKER_H

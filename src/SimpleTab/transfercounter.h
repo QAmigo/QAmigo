@@ -18,6 +18,7 @@ public slots:
 public:
     void add(int count);
     void clear();
+    void setLabelText(QString text);
 
 public:
     QHBoxLayout *layout;

@@ -1,4 +1,4 @@
-#ifndef TABADVANCED_H
+﻿#ifndef TABADVANCED_H
 #define TABADVANCED_H
 
 #include <QWidget>
@@ -59,6 +59,7 @@ private:
     void updateSelection(QModelIndex index);
     void clearHead(QModelIndex index);
     void clearTree();
+    void retranslateUi();
 
 private:
     QPushButton *buttonEnable;
@@ -93,6 +94,10 @@ private:
     QRegExpValidator *validatorHeader;
 
     bool allowRunning;
+
+    // QWidget interface
+protected:
+    void changeEvent(QEvent *event) override;
 };
 
 #endif // TABADVANCED_H

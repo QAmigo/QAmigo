@@ -71,3 +71,6 @@ DISTFILES +=
 
 RESOURCES += \
     resources/icons.qrc
+
+TRANSLATIONS = languages/Serial-Amigo_en.ts \
+        languages/Serial-Amigo_zh.ts

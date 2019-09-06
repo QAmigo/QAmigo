@@ -1,11 +1,11 @@
-#include "datavisualizationgraph.h"
+﻿#include "datavisualizationgraph.h"
 
 #include <QtCharts/QChartView>
 #include <QVBoxLayout>
 
 DataVisualizationGraph::DataVisualizationGraph(QWidget *parent) : QWidget(parent),
     graph(new QGraphicsView()),
-    buttonClearGraph(new QPushButton("Clear")),
+    buttonClearGraph(new QPushButton(tr("Clear"))),
     chart(new QChart()),
     timerUpdate(new QBasicTimer()),
     currentX(0),
@@ -110,4 +110,16 @@ void DataVisualizationGraph::timerEvent(QTimerEvent *event)
         }
     } else
         QWidget::timerEvent(event);
+}
+
+void DataVisualizationGraph::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange)
+        retranslateUi();
+    QWidget::changeEvent(event);
+}
+
+void DataVisualizationGraph::retranslateUi()
+{
+    buttonClearGraph->setText(QCoreApplication::translate("DataVisualizationGraph", "Clear"));
 }

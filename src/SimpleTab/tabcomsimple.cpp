@@ -1,6 +1,7 @@
-#include "serialsendbox.h"
+﻿#include "serialsendbox.h"
 #include "tabcomsimple.h"
 
+#include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QTime>
@@ -8,11 +9,11 @@
 TabCOMSimple::TabCOMSimple(QWidget *parent,
                            QSerialPort *port) : QWidget(parent),
     boxReceive(new QPlainTextEdit()),
-    radioReceiveHex(new QRadioButton("Hex")),
-    radioReceiveASC(new QRadioButton("ASC")),
-    buttonReceiveClear(new QPushButton("Clear All")),
-    counterRX(new TransferCounter(parent, QString("RX"))),
-    counterTX(new TransferCounter(parent, QString("TX")))
+    radioReceiveHex(new QRadioButton(tr("Hex"))),
+    radioReceiveASC(new QRadioButton(tr("ASC"))),
+    buttonReceiveClear(new QPushButton(tr("Clear All"))),
+    counterRX(new TransferCounter(parent, tr("RX"))),
+    counterTX(new TransferCounter(parent, tr("TX")))
 {
     radioReceiveASC->setChecked(true);
 
@@ -93,4 +94,20 @@ void TabCOMSimple::onButtonReceiveClearClicked()
 void TabCOMSimple::sendError(QString string)
 {
     emit errorMessage(string);
+}
+
+void TabCOMSimple::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange)
+        retranslateUi();
+    QWidget::changeEvent(event);
+}
+
+void TabCOMSimple::retranslateUi()
+{
+    radioReceiveHex->setText(QCoreApplication::translate("TabCOMSimple", "Hex"));
+    radioReceiveASC->setText(QCoreApplication::translate("TabCOMSimple", "ASC"));
+    buttonReceiveClear->setText(QCoreApplication::translate("TabCOMSimple", "Clear All"));
+    counterRX->setLabelText(QCoreApplication::translate("TabCOMSimple", "RX"));
+    counterTX->setLabelText(QCoreApplication::translate("TabCOMSimple", "TX"));
 }

@@ -1,4 +1,4 @@
-#include "protocaldataitem.h"
+﻿#include "protocaldataitem.h"
 #include "protocalheaderitem.h"
 #include "tabadvanced.h"
 #include "textinput.h"
@@ -14,25 +14,25 @@
 #include <iostream>
 
 TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
-    buttonEnable(new QPushButton("Enable")),
-    buttonLoad(new QPushButton("Load Settings")),
-    buttonSave(new QPushButton("Save Settings")),
-    labelType(new QLabel("Var Type")),
+    buttonEnable(new QPushButton(tr("Enable"))),
+    buttonLoad(new QPushButton(tr("Load Settings"))),
+    buttonSave(new QPushButton(tr("Save Settings"))),
+    labelType(new QLabel(tr("Var Type"))),
     comboType(new QComboBox()),
     treeProtocals(new QTreeView()),
     model(new QStandardItemModel()),
-    groupEndianess(new QGroupBox("Endianess")),
-    radioLittle(new QRadioButton("Little")),
-    radioBig(new QRadioButton("Big")),
+    groupEndianess(new QGroupBox(tr("Endianess"))),
+    radioLittle(new QRadioButton(tr("Little"))),
+    radioBig(new QRadioButton(tr("Big"))),
     listProtocals(new QList<Protocal *>()),
     mutexAdd(new QMutex()),
-    buttonAddHeader(new QPushButton("Add Header")),
-    buttonAddData(new QPushButton("Add Data")),
-    buttonDelete(new QPushButton("Delete")),
-    buttonUp(new QPushButton("Up")),
-    buttonDown(new QPushButton("Down")),
+    buttonAddHeader(new QPushButton(tr("Add Header"))),
+    buttonAddData(new QPushButton(tr("Add Data"))),
+    buttonDelete(new QPushButton(tr("Delete"))),
+    buttonUp(new QPushButton(tr("Up"))),
+    buttonDown(new QPushButton(tr("Down"))),
     boxLog(new QPlainTextEdit()),
-    buttonClearLog(new QPushButton("Clear")),
+    buttonClearLog(new QPushButton(tr("Clear"))),
     graph(new DataVisualizationGraph()),
     enabled(false),
     endianess(BIG),
@@ -68,7 +68,7 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     connect(model, &QStandardItemModel::itemChanged, this, &TabAdvanced::ontreeProtocalItemChanged);
     selectionModel = treeProtocals->selectionModel();
 
-    model->setHorizontalHeaderLabels(QStringList() << QStringLiteral("Data") << QStringLiteral("Name"));
+    model->setHorizontalHeaderLabels(QStringList() << tr("Data") << tr("Name"));
     QVBoxLayout *layoutListControls = new QVBoxLayout();
     layoutList->addLayout(layoutListControls);
     layoutListControls->addWidget(buttonEnable);
@@ -184,7 +184,7 @@ void TabAdvanced::onButtonAddHeaderClicked()
         TextTranslator translator = TextTranslator(input->getText());
         QByteArray header = translator.toHex();
         if (checkIfHeaderExists(header)) {
-            QMessageBox::warning(this, "Error", "Header already exists.");
+            QMessageBox::warning(this, tr("Error"), tr("Header already exists"));
         } else {
             addHeader(header);
         }
@@ -250,7 +250,7 @@ void TabAdvanced::onButtonAddDataClicked()
                 nameAllocator->freeName(allocatedName);
             }
             if (checkIfNameExists(name)) {
-                QMessageBox::warning(this, "Error", "Name already exists.");
+                QMessageBox::warning(this, tr("Error"), tr("Name already exists"));
                 return;
             }
             addData(index, name, comboType->currentIndex());
@@ -366,7 +366,7 @@ void TabAdvanced::onButtonLoadSettingsClicked()
     } else {
         QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly)) {
-            QMessageBox::warning(this, "Error", "File open failed.");
+            QMessageBox::warning(this, tr("Error"), tr("File open failed"));
             return;
         }
 
@@ -412,7 +412,7 @@ void TabAdvanced::onButtonSaveSettingsClicked()
 
         QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly)) {
-            QMessageBox::warning(this, "Error", "File open failed.");
+            QMessageBox::warning(this, tr("Error"), tr("File open failed"));
             return;
         }
 
@@ -469,4 +469,30 @@ const QList<Protocal *> &TabAdvanced::getListProtocals()
 const ENDIANESS &TabAdvanced::getEndianess()
 {
     return endianess;
+}
+
+void TabAdvanced::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange)
+        retranslateUi();
+}
+
+void TabAdvanced::retranslateUi()
+{
+    buttonEnable->setText(QCoreApplication::translate("TabAdvanced", "Enable"));
+    buttonLoad->setText(QCoreApplication::translate("TabAdvanced", "Load Settings"));
+    buttonSave->setText(QCoreApplication::translate("TabAdvanced", "Save Settings"));
+    labelType->setText(QCoreApplication::translate("TabAdvanced", "Var Type"));
+    groupEndianess->setTitle(QCoreApplication::translate("TabAdvanced", "Endianess"));
+    radioLittle->setText(QCoreApplication::translate("TabAdvanced", "Little"));
+    radioBig->setText(QCoreApplication::translate("TabAdvanced", "Big"));
+    buttonAddHeader->setText(QCoreApplication::translate("TabAdvanced", "Add Header"));
+    buttonAddData->setText(QCoreApplication::translate("TabAdvanced", "Add Data"));
+    buttonDelete->setText(QCoreApplication::translate("TabAdvanced", "Delete"));
+    buttonUp->setText(QCoreApplication::translate("TabAdvanced", "Up"));
+    buttonDown->setText(QCoreApplication::translate("TabAdvanced", "Down"));
+    buttonClearLog->setText(QCoreApplication::translate("TabAdvanced", "Clear"));
+    model->setHorizontalHeaderLabels(QStringList() <<
+                                     QCoreApplication::translate("TabAdvanced", "Data") <<
+                                     QCoreApplication::translate("TabAdvanced", "Name"));
 }

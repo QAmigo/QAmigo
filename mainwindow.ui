@@ -176,7 +176,14 @@
     </property>
     <addaction name="actionLoad_Plugin"/>
    </widget>
+   <widget class="QMenu" name="menuLanguage">
+    <property name="title">
+     <string>Language</string>
+    </property>
+    <addaction name="actionEnglish"/>
+   </widget>
    <addaction name="menuPlugins"/>
+   <addaction name="menuLanguage"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -196,6 +203,11 @@
   <action name="actionLoad_Plugin">
    <property name="text">
     <string>Load Plugin</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="text">
+    <string>English</string>
    </property>
   </action>
  </widget>

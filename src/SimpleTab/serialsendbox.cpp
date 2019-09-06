@@ -1,5 +1,6 @@
-#include "serialsendbox.h"
+﻿#include "serialsendbox.h"
 
+#include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QSpacerItem>
@@ -7,15 +8,15 @@
 #include <QMessageBox>
 
 SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(parent),
-    buttonSend(new QPushButton("Send", this)),
-    radioHex(new QRadioButton("Hex", this)),
-    radioASC(new QRadioButton("ASC", this)),
+    buttonSend(new QPushButton(tr("Send"), this)),
+    radioHex(new QRadioButton(tr("Hex"), this)),
+    radioASC(new QRadioButton(tr("ASC"), this)),
     boxSend(new QPlainTextEdit(this)),
     port(port),
     checkTimer(new QCheckBox()),
-    labelTimer(new QLabel("Repeat Send Every")),
+    labelTimer(new QLabel(tr("Repeat Send Every"))),
     spinTimer(new QSpinBox()),
-    labelMs(new QLabel("ms")),
+    labelMs(new QLabel(tr("ms"))),
     timer(new QBasicTimer())
 {
     radioASC->setChecked(true);
@@ -130,4 +131,20 @@ void SerialSendBox::timerEvent(QTimerEvent *event)
         on_buttonSend_clicked();
     else
         QWidget::timerEvent(event);
+}
+
+void SerialSendBox::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange)
+        retranslateUi();
+    QWidget::changeEvent(event);
+}
+
+void SerialSendBox::retranslateUi()
+{
+    buttonSend->setText(QCoreApplication::translate("SerialSendBox", "Send"));
+    radioHex->setText(QCoreApplication::translate("SerialSendBox", "Hex"));
+    radioASC->setText(QCoreApplication::translate("SerialSendBox", "ASC"));
+    labelTimer->setText(QCoreApplication::translate("SerialSendBox", "Repeat Send Every"));
+    labelMs->setText(QCoreApplication::translate("SerialSendBox", "ms"));
 }

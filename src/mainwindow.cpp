@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
@@ -8,7 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     port(new QSerialPort()),
-    listPlugins(QList<TabPluginInterface *>())
+    listPlugins(QList<TabPluginInterface *>()),
+    translator(new QTranslator())
 {
     ui->setupUi(this);
 
@@ -27,11 +28,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboDataBits->addItem("8", 8);
     ui->comboDataBits->setCurrentIndex(3);
 
-    ui->comboParity->addItem("NoParity",	0);
-    ui->comboParity->addItem("EvenParity",	2);
-    ui->comboParity->addItem("OldParity",	3);
-    ui->comboParity->addItem("SpaceParity",	4);
-    ui->comboParity->addItem("MarkParity",	5);
+    ui->comboParity->addItem(tr("NoParity"),	0);
+    ui->comboParity->addItem(tr("EvenParity"),	2);
+    ui->comboParity->addItem(tr("OldParity"),	3);
+    ui->comboParity->addItem(tr("SpaceParity"),	4);
+    ui->comboParity->addItem(tr("MarkParity"),	5);
     ui->comboParity->setCurrentIndex(0);
 
     ui->comboStopBits->addItem("1",   1);
@@ -39,16 +40,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboStopBits->addItem("1.5", 3);
     ui->comboStopBits->setCurrentIndex(0);
 
-    ui->comboFlowControl->addItem("No", 0);
-    ui->comboFlowControl->addItem("Hard", 1);
-    ui->comboFlowControl->addItem("Soft", 2);
+    ui->comboFlowControl->addItem(tr("No"), 0);
+    ui->comboFlowControl->addItem(tr("Hard"), 1);
+    ui->comboFlowControl->addItem(tr("Soft"), 2);
     ui->comboFlowControl->setCurrentIndex(0);
 
     tabCOMSimple = new TabCOMSimple(this, port);
-    ui->tabMain->addTab(tabCOMSimple, "Simple");
+    ui->tabMain->addTab(tabCOMSimple, tr("Simple"));
 
     tabAdvanced = new TabAdvanced(this);
-    ui->tabMain->addTab(tabAdvanced, "Advanced");
+    ui->tabMain->addTab(tabAdvanced, tr("Advanced"));
 
     decoder = new Decoder(this, tabAdvanced->getListProtocals(), tabAdvanced->getEndianess());
 
@@ -69,6 +70,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QFileInfo pluginsFolder(folderString);
     if (!pluginsFolder.exists())
         QDir().mkdir(folderString);
+
+    connect(ui->actionEnglish, &QAction::triggered, this, &MainWindow::onActionEnglishTriggered);
+    ui->menuLanguage->addAction(tr("简体中文"), this, &MainWindow::onActionChineseTriggered);
 }
 
 MainWindow::~MainWindow()
@@ -90,7 +94,7 @@ void MainWindow::refreshPorts()
 
 void MainWindow::errorMessage(QString str)
 {
-    QMessageBox::warning(this, "Error", str);
+    QMessageBox::warning(this, tr("Error"), str);
 }
 
 void MainWindow::openSerial()
@@ -98,7 +102,7 @@ void MainWindow::openSerial()
     if (ui->comboPorts->currentText() != "") {
         if (port->isOpen()) {
             port->close();
-            ui->buttonOpen->setText("Open");
+            ui->buttonOpen->setText(tr("Open"));
             tabAdvanced->setAllowRunning(false);
         } else {
             port->setPortName(ui->comboPorts->currentText());
@@ -107,7 +111,7 @@ void MainWindow::openSerial()
             if (ok)
                 port->setBaudRate(baudrate);
             else {
-                QMessageBox::warning(this, "Error", "Baudrate parse failed.");
+                QMessageBox::warning(this, tr("Error"), tr("Baudrate parse failed"));
                 return;
             }
 
@@ -189,10 +193,10 @@ void MainWindow::openSerial()
             port->setFlowControl(flowControl);
 
             if (!port->open(QIODevice::ReadWrite)) {
-                QMessageBox::warning(this, "Serial open Failed.", "Port open Failed.");
+                QMessageBox::warning(this, tr("Serial open Failed"), tr("Port open Failed"));
                 return;
             }
-            ui->buttonOpen->setText("Close");
+            ui->buttonOpen->setText(tr("Close"));
 
             decoder->setConnection(port);
             tabAdvanced->setAllowRunning(true);
@@ -235,7 +239,7 @@ void MainWindow::onLoadPluginTriggered()
             ui->tabMain->addTab(widget, plugin->getName());
             ui->tabMain->setCurrentIndex(ui->tabMain->count() - 1);
         } else
-            QMessageBox::warning(this, "error", "plugin read error");
+            QMessageBox::warning(this, tr("error"), tr("plugin read error"));
     }
 }
 
@@ -243,6 +247,51 @@ void MainWindow::onDecodedDataReady(int id, QList<double> listValues)
 {
     for (auto plugin : listPlugins)
         plugin->onFrameUpdated(id, listValues);
+}
+
+// Two characters locale, eg: en, zh, de.
+void MainWindow::translateTo(QString locale)
+{
+    QString qmPath = qApp->applicationDirPath().append("/languages/Serial-Amigo_");
+    translator->load(qmPath.append(locale).append(".qm"));
+    qApp->installTranslator(translator);
+}
+
+void MainWindow::retranslateUi()
+{
+    ui->tabMain->setTabText(1, QCoreApplication::translate("MainWindow", "Simple"));
+    ui->tabMain->setTabText(2, QCoreApplication::translate("MainWindow", "Advanced"));
+    ui->comboParity->setItemText(0, QCoreApplication::translate("MainWindow", "NoParity"));
+    ui->comboParity->setItemText(1, QCoreApplication::translate("MainWindow", "EvenParity"));
+    ui->comboParity->setItemText(2, QCoreApplication::translate("MainWindow", "OldParity"));
+    ui->comboParity->setItemText(3, QCoreApplication::translate("MainWindow", "SpaceParity"));
+    ui->comboParity->setItemText(4, QCoreApplication::translate("MainWindow", "MarkParity"));
+    ui->comboFlowControl->setItemText(0, QCoreApplication::translate("MainWindow", "No"));
+    ui->comboFlowControl->setItemText(1, QCoreApplication::translate("MainWindow", "Hard"));
+    ui->comboFlowControl->setItemText(2, QCoreApplication::translate("MainWindow", "Soft"));
+}
+
+void MainWindow::onActionChineseTriggered()
+{
+    translateTo("zh");
+}
+
+void MainWindow::onActionEnglishTriggered()
+{
+    translateTo("en");
+}
+
+void MainWindow::changeEvent(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        retranslateUi();
+        break;
+    default:
+        break;
+    }
+    QMainWindow::changeEvent(event);
 }
 
 void MainWindow::updatePluginConnection()
