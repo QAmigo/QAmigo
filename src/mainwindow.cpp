@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QDir().mkdir(folderString);
     folderString.append("/plugins");
     QFileInfo pluginsFolder(folderString);
-    if (!folder.exists())
+    if (!pluginsFolder.exists())
         QDir().mkdir(folderString);
 }
 
