@@ -209,17 +209,14 @@ void MainWindow::onButtonRefreshClicked()
 void MainWindow::onLoadPluginTriggered()
 {
     QString pluginsFolder = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QSerial Socket Amigo/plugins";
-
-    QString type = tr("Dynamic Linked Library");
 #if defined(Q_OS_WIN)
-    type.append(" (*.dll)");
+    QString type = tr("Dynamic Linked Library (*.dll)");
 #elif defined (Q_OS_LINUX)
-    type.append(" (*.so)");
+    QString type = tr("Shared Library (*.so)");
 #else
     //Not supporting Mac.
     Q_ASSERT(false);
 #endif
-
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Select Plugin to Load"),
         pluginsFolder,
