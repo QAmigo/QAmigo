@@ -336,9 +336,6 @@ void TabAdvanced::onButtonLoadSettingsClicked()
 {
     QString folderString = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QSerial Socket Amigo";
     QFileInfo folder(folderString);
-    if (!folder.exists())
-        QDir().mkdir(folderString);
-
     QString fileName = QFileDialog::getOpenFileName(this,
                 tr("Open Protocal Settings"),
                 folderString,
@@ -370,16 +367,12 @@ void TabAdvanced::onButtonLoadSettingsClicked()
         }
         file.close();
     }
-
 }
 
 void TabAdvanced::onButtonSaveSettingsClicked()
 {
     QString folderString = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QSerial Socket Amigo";
     QFileInfo folder(folderString);
-    if (!folder.exists())
-        QDir().mkdir(folderString);
-
     QString fileName = QFileDialog::getSaveFileName(this,
                 tr("Save Protocal Settings"),
                 folderString,

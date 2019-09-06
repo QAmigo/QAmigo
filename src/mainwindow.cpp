@@ -60,6 +60,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->buttonRefreshPorts, &QPushButton::clicked, this, &MainWindow::onButtonRefreshClicked);
     connect(ui->actionLoad_Plugin, &QAction::triggered, this, &MainWindow::onLoadPluginTriggered);
     connect(decoder, &Decoder::frameReady, this, &MainWindow::onDecodedDataReady);
+
+    QString folderString = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/QSerial Socket Amigo";
+    QFileInfo folder(folderString);
+    if (!folder.exists())
+        QDir().mkdir(folderString);
+    folderString.append("/plugins");
+    QFileInfo pluginsFolder(folderString);
+    if (!folder.exists())
+        QDir().mkdir(folderString);
 }
 
 MainWindow::~MainWindow()
