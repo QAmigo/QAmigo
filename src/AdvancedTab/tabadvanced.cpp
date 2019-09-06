@@ -20,6 +20,7 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     labelType(new QLabel("Var Type")),
     comboType(new QComboBox()),
     treeProtocals(new QTreeView()),
+    model(new QStandardItemModel()),
     groupEndianess(new QGroupBox("Endianess")),
     radioLittle(new QRadioButton("Little")),
     radioBig(new QRadioButton("Big")),
@@ -63,9 +64,9 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
 
     layoutList->addWidget(treeProtocals);
     layoutList->setStretchFactor(treeProtocals, 4);
-    QStandardItemModel *model = new QStandardItemModel();
     treeProtocals->setModel(model);
     connect(model, &QStandardItemModel::itemChanged, this, &TabAdvanced::ontreeProtocalItemChanged);
+    selectionModel = treeProtocals->selectionModel();
 
     model->setHorizontalHeaderLabels(QStringList() << QStringLiteral("Data") << QStringLiteral("Name"));
     QVBoxLayout *layoutListControls = new QVBoxLayout();
@@ -134,7 +135,6 @@ void TabAdvanced::frameDataReady(int id, QByteArray array)
             double value = type->getDouble(endianess);
             bufferShow.append(QString().sprintf("%.2lf ", value));
             //Graph data send.
-            QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
             ProtocalDataItem *item = static_cast<ProtocalDataItem *>(model->item(id)->child(i));
             if (item->checkState() == Qt::CheckState::Checked) {
                 item->setCurrentValue(value);
@@ -149,7 +149,6 @@ void TabAdvanced::frameDataReady(int id, QByteArray array)
 
 bool TabAdvanced::checkIfHeaderExists(QByteArray header)
 {
-    QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
     for (int i = 0; i < listProtocals->count(); i++) {
         ProtocalHeaderItem *item = static_cast<ProtocalHeaderItem *>(model->item(i));
         if (item->getHeader().compare(header) == 0)
@@ -160,7 +159,6 @@ bool TabAdvanced::checkIfHeaderExists(QByteArray header)
 
 bool TabAdvanced::checkIfNameExists(QString name)
 {
-    QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
     for (int i = 0; i < listProtocals->count(); i++) {
         ProtocalHeaderItem *headerItem = static_cast<ProtocalHeaderItem *>(model->item(i));
         for (int j = 0; j < headerItem->rowCount(); j++) {
@@ -180,21 +178,14 @@ void TabAdvanced::setAllowRunning(bool value)
 
 void TabAdvanced::addHeader(QByteArray header)
 {
-    QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
     QList<QStandardItem *> list;
     list.append(new ProtocalHeaderItem(header));
     list.append(new QStandardItem());
 
     model->appendRow(list);
-    QItemSelectionModel *selectionModel = treeProtocals->selectionModel();
     int count = model->rowCount();
     QModelIndex indexLast = model->index(count - 1, 0, QModelIndex());
-    selectionModel->select(indexLast,
-       QItemSelectionModel::SelectionFlag::ClearAndSelect |
-       QItemSelectionModel::SelectionFlag::Rows);
-    selectionModel->setCurrentIndex(indexLast,
-        QItemSelectionModel::SelectionFlag::Current);
-
+    updateSelection(indexLast);
 }
 
 void TabAdvanced::onButtonAddHeaderClicked()
@@ -215,7 +206,6 @@ void TabAdvanced::onButtonAddHeaderClicked()
 //index of combo is corresponding to the index of type declared in VAR_TYPE.
 void TabAdvanced::addData(QModelIndex index, QString name, int indexType)
 {
-    QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
     QList<QStandardItem *> list;
     VAR_TYPE type = static_cast<VAR_TYPE>(comboType->itemData(indexType).toInt());
     list.append(new ProtocalDataItem(type, comboType->itemText(indexType)));
@@ -232,18 +222,19 @@ void TabAdvanced::addData(QModelIndex index, QString name, int indexType)
         int count = model->itemFromIndex(index)->rowCount();
         indexLast = model->index(count - 1, 0, index);
     }
-    QItemSelectionModel *selectionModel = treeProtocals->selectionModel();
-    selectionModel->select(indexLast,
-       QItemSelectionModel::SelectionFlag::ClearAndSelect |
-       QItemSelectionModel::SelectionFlag::Rows);
-    selectionModel->setCurrentIndex(indexLast,
-        QItemSelectionModel::SelectionFlag::Current);
+    updateSelection(indexLast);
+}
+
+void TabAdvanced::updateSelection(QModelIndex index)
+{
+    selectionModel->select(index, QItemSelectionModel::SelectionFlag::ClearAndSelect |
+                   QItemSelectionModel::SelectionFlag::Rows);
+    selectionModel->setCurrentIndex(index, QItemSelectionModel::SelectionFlag::Current);
     updateDecodeParameters();
 }
 
 void TabAdvanced::onButtonAddDataClicked()
 {
-    QItemSelectionModel *selectionModel = treeProtocals->selectionModel();
     QModelIndex index = selectionModel->currentIndex();
     if (index.isValid()) {
         QString allocatedName = nameAllocator->allocateName();
@@ -268,7 +259,6 @@ void TabAdvanced::onButtonDeleteClicked()
 {
     QModelIndex index = treeProtocals->selectionModel()->currentIndex();
     if (index.isValid()) {
-        QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
         if (index.parent().isValid()) {
             QStandardItem *item = (model->itemFromIndex(index.siblingAtColumn(1)));
             nameAllocator->freeName(item->text());
@@ -290,7 +280,6 @@ void TabAdvanced::ontreeProtocalItemChanged(QStandardItem *item)
     //Assume only checkbox will change now.
     ProtocalDataItem *dataItem = static_cast<ProtocalDataItem *>(item);
     if (item->checkState() == Qt::CheckState::Checked) {
-        QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
         QString name = model->itemFromIndex(dataItem->index().siblingAtColumn(1))->text();
         dataItem->setSeries(graph->createSeries(name));
     } else {
@@ -301,7 +290,6 @@ void TabAdvanced::ontreeProtocalItemChanged(QStandardItem *item)
 
 void TabAdvanced::onGraphUpdate(int currentX)
 {
-    QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
     for (int i = 0; i < model->rowCount(); i++) {
         ProtocalHeaderItem *headerItem = static_cast<ProtocalHeaderItem *>(model->item(i));
         for (int j = 0; j < headerItem->rowCount(); j++) {
@@ -313,34 +301,25 @@ void TabAdvanced::onGraphUpdate(int currentX)
 
 void TabAdvanced::onButtonUpClicked()
 {
-    QItemSelectionModel *selectionModel = treeProtocals->selectionModel();
     QModelIndex index = selectionModel->currentIndex();
     if (index.isValid()) {
         if (index.siblingAtRow(0) != index) {
-            QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
             if (!index.parent().isValid()) {
                 model->insertRow(index.row() - 1, model->takeRow(index.row()));
             } else {
                 QStandardItem *item = model->itemFromIndex(index);
                 item->parent()->insertRow(index.row() - 1, item->parent()->takeRow(index.row()));
             }
-            selectionModel->select(index.siblingAtRow(index.row() - 1),
-                                   QItemSelectionModel::SelectionFlag::ClearAndSelect |
-                                   QItemSelectionModel::SelectionFlag::Rows);
-                    selectionModel->setCurrentIndex(index.siblingAtRow(index.row() - 1),
-                                        QItemSelectionModel::SelectionFlag::Current);
+            updateSelection(index.siblingAtRow(index.row() - 1));
         }
     }
-    updateDecodeParameters();
 }
 
 void TabAdvanced::onButtonDownClicked()
 {
-    QItemSelectionModel *selectionModel = treeProtocals->selectionModel();
     QModelIndex index = selectionModel->currentIndex();
     int oldRow = index.row();
     if (index.isValid()) {
-        QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
         if (!index.parent().isValid()) {	//If it's the last one.
             if (index.row() == model->rowCount() - 1)
                 return;
@@ -352,13 +331,8 @@ void TabAdvanced::onButtonDownClicked()
             QStandardItem *item = model->itemFromIndex(index);
             item->parent()->insertRow(index.row() + 1, item->parent()->takeRow(index.row()));
         }
-        selectionModel->select(index.siblingAtRow(oldRow + 1),
-                               QItemSelectionModel::SelectionFlag::ClearAndSelect |
-                               QItemSelectionModel::SelectionFlag::Rows);
-        selectionModel->setCurrentIndex(index.siblingAtRow(oldRow + 1),
-                                        QItemSelectionModel::SelectionFlag::Current);
+        updateSelection(index.siblingAtRow(oldRow + 1));
     }
-    updateDecodeParameters();
 }
 
 void TabAdvanced::onButtonEnableClicked()
@@ -403,7 +377,6 @@ void TabAdvanced::onButtonLoadSettingsClicked()
             QJsonArray types = frameObject["types"].toArray();
             for (int j = 0; j < types.count(); j++) {
                 QJsonObject type = types.at(j).toObject();
-                QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
                 QModelIndex index = model->index(model->rowCount() - 1, 0);
                 QString name = type["name"].toString();
                 nameAllocator->setNameUsed(name);
@@ -438,7 +411,6 @@ void TabAdvanced::onButtonSaveSettingsClicked()
             return;
         }
 
-        QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
         QJsonObject object = QJsonObject();
         for (int i = 0; i < model->rowCount(); i++) {
             ProtocalHeaderItem *header = static_cast<ProtocalHeaderItem *>(model->item(i));
@@ -474,7 +446,6 @@ void TabAdvanced::onRadioLittleBigClicked()
 
 void TabAdvanced::updateDecodeParameters()
 {
-    QStandardItemModel *model = static_cast<QStandardItemModel *>(treeProtocals->model());
     listProtocals->clear();
     for (int i = 0; i < model->rowCount(); i++) {
         ProtocalHeaderItem *header = static_cast<ProtocalHeaderItem *>(model->item(i));

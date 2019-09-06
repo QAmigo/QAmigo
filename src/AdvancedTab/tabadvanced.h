@@ -54,6 +54,9 @@ private:
     void updateDecodeParameters();
     bool checkIfHeaderExists(QByteArray header);
     bool checkIfNameExists(QString name);
+    void addHeader(QByteArray header);
+    void addData(QModelIndex index, QString name, int indexType);
+    void updateSelection(QModelIndex index);
 
 private:
     QPushButton *buttonEnable;
@@ -62,6 +65,8 @@ private:
     QLabel *labelType;
     QComboBox *comboType;
     QTreeView *treeProtocals;
+    QStandardItemModel *model;
+    QItemSelectionModel *selectionModel;
     QGroupBox *groupEndianess;
     QRadioButton *radioLittle;
     QRadioButton *radioBig;
@@ -86,8 +91,6 @@ private:
     QRegExpValidator *validatorHeader;
 
     bool allowRunning;
-    void addHeader(QByteArray header);
-    void addData(QModelIndex index, QString name, int indexType);
 };
 
 #endif // TABADVANCED_H
