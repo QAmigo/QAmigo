@@ -119,32 +119,17 @@ TabAdvanced::~TabAdvanced()
     qDeleteAll(*listProtocals);
 }
 
-void TabAdvanced::frameDataReady(int id, QByteArray array)
+void TabAdvanced::frameDataReady(int id, QList<double> listValues)
 {
     QString bufferShow = QString().sprintf("[%d] \t", id);
-    if (enabled) {
-        Protocal *protocal = listProtocals->at(id);
-        QList<VarType *> *listData = protocal->getListData();
-        //Prepare data to send to plugins.
-        QList<double> listValues;
-        int count = 0;
-        for (int i = 0; i < listData->count(); i++) {
-            VarType *type = listData->at(i);
-            type->setBufferValue(array.mid(count, type->getSize()));
-            count += type->getSize();
-            double value = type->getDouble(endianess);
-            bufferShow.append(QString().sprintf("%.2lf ", value));
-            //Graph data send.
-            ProtocalDataItem *item = static_cast<ProtocalDataItem *>(model->item(id)->child(i));
-            if (item->checkState() == Qt::CheckState::Checked) {
-                item->setCurrentValue(value);
-            }
-            listValues.append(value);
+    for (int i = 0; i < listValues.count(); i++) {
+        bufferShow.append(QString().sprintf("%.2lf ", listValues.at(i)));
+        ProtocalDataItem *item = static_cast<ProtocalDataItem *>(model->item(id)->child(i));
+        if (item->checkState() == Qt::CheckState::Checked) {
+            item->setCurrentValue(listValues.at(i));
         }
-        emit onDecodedDataReady(id, listValues);
-        if (bufferShow.count() != 0)
-            boxLog->appendPlainText(bufferShow);
     }
+    boxLog->appendPlainText(bufferShow);
 }
 
 bool TabAdvanced::checkIfHeaderExists(QByteArray header)

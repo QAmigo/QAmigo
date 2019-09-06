@@ -31,10 +31,9 @@ public:
 
 signals:
     void onDecodeParametersUpdated(const QList<Protocal *> &listProtocals);
-    void onDecodedDataReady(int id, QList<double> listValues);
 
 public slots:
-    void frameDataReady(int id, QByteArray array);
+    void frameDataReady(int id, QList<double> listValues);
 
 private slots:
     void onButtonAddHeaderClicked();

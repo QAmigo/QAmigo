@@ -19,7 +19,7 @@ public:
     ~Decoder();
 
 signals:
-    void frameReady(int id, const QByteArray &array);		//Sends one ready frame out.
+    void frameReady(int id, QList<double> listValues);		//Sends one ready frame out.
     void rawDataReady(const QByteArray &array);	//Sends what it recives.
 
 public:
@@ -28,16 +28,21 @@ public:
 //public slots:
 //    void onDecodedParametersUpdated(const QList<Protocal *> &listProtocals);
 
+    ENDIANESS getEndianess() const;
+    void setEndianess(const ENDIANESS &value);
+
 private slots:
     void dataReady();
 
 private:
     void decode_buffer();
+    void decodeFrame(int id, QByteArray frameRawData);
 
 private:
     QByteArray buffer;
     QIODevice *connection;
     QList<Protocal *> &listProtocals;
+    ENDIANESS endianess;
 };
 
 #endif // DECODERTHREAD_H

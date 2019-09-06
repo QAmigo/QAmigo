@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(decoder, &Decoder::frameReady, tabAdvanced, &TabAdvanced::frameDataReady);
     connect(ui->buttonRefreshPorts, &QPushButton::clicked, this, &MainWindow::onButtonRefreshClicked);
     connect(ui->actionLoad_Plugin, &QAction::triggered, this, &MainWindow::onLoadPluginTriggered);
-    connect(tabAdvanced, &TabAdvanced::onDecodedDataReady, this, &MainWindow::onDecodedDataReady);
+    connect(decoder, &Decoder::frameReady, this, &MainWindow::onDecodedDataReady);
 }
 
 MainWindow::~MainWindow()

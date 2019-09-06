@@ -50,7 +50,7 @@ void Decoder::decode_buffer()
             int index;
             if ((index = buffer.indexOf(protocal->getHeader())) != -1) {
                 if (buffer.length() - index >= protocal->getFrameLength()) {
-                    emit frameReady(i, buffer.mid(index + protocal->getHeader().length(), protocal->getFrameLength()));
+                    decodeFrame(i, buffer.mid(index + protocal->getHeader().length(), protocal->getFrameLength()));
                     buffer.remove(index, protocal->getFrameLength());
                     retrived = true;
                 }
@@ -60,4 +60,30 @@ void Decoder::decode_buffer()
         if (!found)
             buffer.clear();
     } while (found && retrived);
+}
+
+void Decoder::decodeFrame(int id, QByteArray frameRawData)
+{
+    Protocal *protocal = listProtocals.at(id);
+    QList<VarType *> *listData = protocal->getListData();
+    //Prepare data to send to plugins.
+    QList<double> listValues;
+    int count = 0;
+    for (int i = 0; i < listData->count(); i++) {
+        VarType *type = listData->at(i);
+        type->setBufferValue(frameRawData.mid(count, type->getSize()));
+        count += type->getSize();
+        double value = type->getDouble(endianess);
+        listValues.append(value);
+    }
+    emit frameReady(id, listValues);}
+
+ENDIANESS Decoder::getEndianess() const
+{
+    return endianess;
+}
+
+void Decoder::setEndianess(const ENDIANESS &value)
+{
+    endianess = value;
 }
