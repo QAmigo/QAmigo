@@ -57,6 +57,8 @@ private:
     void addHeader(QByteArray header);
     void addData(QModelIndex index, QString name, int indexType);
     void updateSelection(QModelIndex index);
+    void clearHead(QModelIndex index);
+    void clearTree();
 
 private:
     QPushButton *buttonEnable;

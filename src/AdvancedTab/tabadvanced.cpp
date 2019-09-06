@@ -218,6 +218,22 @@ void TabAdvanced::updateSelection(QModelIndex index)
     updateDecodeParameters();
 }
 
+void TabAdvanced::clearHead(QModelIndex index)
+{
+    for (int i = 0; i < model->itemFromIndex(index)->rowCount(); i++) {
+        nameAllocator->freeName(model->itemFromIndex(index)->child(i, 1)->text());
+    }
+    model->removeRow(index.row());
+}
+
+void TabAdvanced::clearTree()
+{
+    int count = model->rowCount();
+    //NOTICE: model->rowCount() is changing wth deletion.
+    for (int i = 0; i < count; i++)
+        clearHead(model->index(0, 0));
+}
+
 void TabAdvanced::onButtonAddDataClicked()
 {
     QModelIndex index = selectionModel->currentIndex();
@@ -250,7 +266,7 @@ void TabAdvanced::onButtonDeleteClicked()
             model->removeRow(index.row(), index.parent());
         }
         else
-            model->removeRow(index.row());
+            clearHead(index);
         updateDecodeParameters();
     }
 }
@@ -349,6 +365,7 @@ void TabAdvanced::onButtonLoadSettingsClicked()
             return;
         }
 
+        clearTree();
         QByteArray saveData = file.readAll();
         QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
         QJsonObject object = loadDoc.object();
