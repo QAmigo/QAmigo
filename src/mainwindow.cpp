@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBaudrate->addItem("4800");
     ui->comboBaudrate->addItem("9600");
     ui->comboBaudrate->addItem("115200");
-    ui->comboBaudrate->setCurrentIndex(3);
+    ui->comboBaudrate->setCurrentIndex(4);
 
     ui->comboDataBits->addItem("5", 5);
     ui->comboDataBits->addItem("6", 6);
