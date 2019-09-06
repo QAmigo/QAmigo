@@ -2,6 +2,10 @@
 
 This tool is meant for an assitant tool for users who want to visualize data comming from serial port or net socket(***hasn't been implemented***).
 
+![](doc/images/Load&#32;Protocal&#32;and&#32;3DBox.gif)
+
+This gif shows how to load protocals from json and a [3D Box plugin](https://github.com/QAmigo/3DBox) from shared library, which is a normal operation sequence of the tool.
+
 The start goal of this project was to create a simple serial assistant for linux users, since qt is cross-platform this should be used on all platforms qt supports. And with the support of the decoding system, it should be able to help to visualize data coming from serial and net socket easier.
 
 There should be many hardware modules and custom project are using this kind of communication protocal:
