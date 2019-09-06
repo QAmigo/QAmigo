@@ -25,7 +25,8 @@ public:
     explicit TabAdvanced(QWidget *parent = nullptr);
     ~TabAdvanced();
 
-    QList<Protocal *> &getListProtocals() const;
+    const QList<Protocal *> &getListProtocals();
+    const ENDIANESS &getEndianess();
 
     void setAllowRunning(bool value);
 

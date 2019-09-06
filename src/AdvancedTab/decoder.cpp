@@ -1,8 +1,10 @@
 #include "decoder.h"
 
-Decoder::Decoder(QObject *object, QList<Protocal *> &listProtocals) :
+Decoder::Decoder(QObject *object, const QList<Protocal *> &listProtocals,
+                 const ENDIANESS &endianess) :
     QObject (object),
-    listProtocals(listProtocals)
+    listProtocals(listProtocals),
+    endianess(endianess)
 {
 
 }
@@ -76,14 +78,5 @@ void Decoder::decodeFrame(int id, QByteArray frameRawData)
         double value = type->getDouble(endianess);
         listValues.append(value);
     }
-    emit frameReady(id, listValues);}
-
-ENDIANESS Decoder::getEndianess() const
-{
-    return endianess;
-}
-
-void Decoder::setEndianess(const ENDIANESS &value)
-{
-    endianess = value;
+    emit frameReady(id, listValues);
 }

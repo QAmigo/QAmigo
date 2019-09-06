@@ -15,7 +15,8 @@ class Decoder : public QObject
     Q_OBJECT
 
 public:
-    Decoder(QObject *object, QList<Protocal *> &listProtocals);
+    Decoder(QObject *object, const QList<Protocal *> &listProtocals,
+            const ENDIANESS &endianess);
     ~Decoder();
 
 signals:
@@ -24,12 +25,6 @@ signals:
 
 public:
     void setConnection(QIODevice *connection);
-
-//public slots:
-//    void onDecodedParametersUpdated(const QList<Protocal *> &listProtocals);
-
-    ENDIANESS getEndianess() const;
-    void setEndianess(const ENDIANESS &value);
 
 private slots:
     void dataReady();
@@ -41,8 +36,8 @@ private:
 private:
     QByteArray buffer;
     QIODevice *connection;
-    QList<Protocal *> &listProtocals;
-    ENDIANESS endianess;
+    const QList<Protocal *> &listProtocals;
+    const ENDIANESS &endianess;
 };
 
 #endif // DECODERTHREAD_H

@@ -352,7 +352,12 @@ void TabAdvanced::onButtonLoadSettingsClicked()
         QByteArray saveData = file.readAll();
         QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
         QJsonObject object = loadDoc.object();
-        for (int i = 0; i < object.keys().count(); i++) {
+        endianess = static_cast<ENDIANESS>(object["endianess"].toInt());
+        if (endianess)
+            radioLittle->setChecked(true);
+        else
+            radioBig->setChecked(true);
+        for (int i = 0; i < object.keys().count() - 1; i++) {
             QJsonObject frameObject = object[QString(i)].toObject();
             TextTranslator translator(frameObject["header"].toString());
             addHeader(translator.toHex());
@@ -405,11 +410,9 @@ void TabAdvanced::onButtonSaveSettingsClicked()
             frameObject["types"] = types;
             object[QString(i)] = frameObject;
         }
-
+        object["endianess"] = endianess;
         QJsonDocument saveDoc(object);
-
         file.write(saveDoc.toJson());
-
         file.close();
     }
 }
@@ -436,7 +439,12 @@ void TabAdvanced::updateDecodeParameters()
     }
 }
 
-QList<Protocal *> &TabAdvanced::getListProtocals() const
+const QList<Protocal *> &TabAdvanced::getListProtocals()
 {
     return *listProtocals;
+}
+
+const ENDIANESS &TabAdvanced::getEndianess()
+{
+    return endianess;
 }

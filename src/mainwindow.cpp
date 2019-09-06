@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     tabAdvanced = new TabAdvanced(this);
     ui->tabMain->addTab(tabAdvanced, "Advanced");
 
-    decoder = new Decoder(this, tabAdvanced->getListProtocals());
+    decoder = new Decoder(this, tabAdvanced->getListProtocals(), tabAdvanced->getEndianess());
 
     connect(ui->buttonOpen, &QPushButton::clicked, this, &MainWindow::openSerial);
 
