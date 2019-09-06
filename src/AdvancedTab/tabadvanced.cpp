@@ -126,10 +126,12 @@ void TabAdvanced::frameDataReady(int id, QList<double> listValues)
         bufferShow.append(QString().sprintf("%.2lf ", listValues.at(i)));
         ProtocalDataItem *item = static_cast<ProtocalDataItem *>(model->item(id)->child(i));
         if (item->checkState() == Qt::CheckState::Checked) {
-            item->setCurrentValue(listValues.at(i));
+            if (enabled)
+                item->setCurrentValue(listValues.at(i));
         }
     }
-    boxLog->appendPlainText(bufferShow);
+    if (enabled)
+        boxLog->appendPlainText(bufferShow);
 }
 
 bool TabAdvanced::checkIfHeaderExists(QByteArray header)
@@ -158,7 +160,8 @@ bool TabAdvanced::checkIfNameExists(QString name)
 void TabAdvanced::setAllowRunning(bool value)
 {
     allowRunning = value;
-    graph->setAllowRunning(allowRunning);
+    if (enabled)
+        graph->setAllowRunning(allowRunning);
 }
 
 void TabAdvanced::addHeader(QByteArray header)
@@ -342,9 +345,11 @@ void TabAdvanced::onButtonEnableClicked()
         buttonEnable->setText("Disable");
         enabled = true;
         updateDecodeParameters();
+        graph->setAllowRunning(true);
     } else {
         buttonEnable->setText("Enable");
         enabled = false;
+        graph->setAllowRunning(false);
     }
 }
 
