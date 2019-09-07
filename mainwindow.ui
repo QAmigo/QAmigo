@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Q Serial Socket Amigo</string>
+   <string>QAmigo</string>
   </property>
   <property name="windowIcon">
    <iconset>
