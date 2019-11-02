@@ -209,7 +209,7 @@ This program supports I18N(internationalization) through Qt's I18N support, only
 
 ## About
 
-The linux version released package uses [CQtDeployer](https://github.com/QuasarApp/Console-QtDeployer) to deploy, thanks to the author's great work!
+The linux version released package uses [CQtDeployer](https://github.com/QuasarApp/CQtDeployer) to deploy, thanks to the author's great work!
 
 # 中文说明
 
@@ -387,4 +387,4 @@ QString QAmigoTabPluginTemplate::getName() const
 
 ## 关于
 
-Linux版本的发布程序使用 [CQtDeployer](https://github.com/QuasarApp/Console-QtDeployer) 发布, 感谢作者的工作!
+Linux版本的发布程序使用 [CQtDeployer](https://github.com/QuasarApp/CQtDeployer) 发布, 感谢作者的工作!
