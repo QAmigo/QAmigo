@@ -1,5 +1,6 @@
-﻿#include "mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "qdevicewatcher.h"
 
 #include <QMessageBox>
 #include <QtSerialPort/QSerialPortInfo>
@@ -73,6 +74,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionEnglish, &QAction::triggered, this, &MainWindow::onActionEnglishTriggered);
     ui->menuLanguage->addAction(tr("简体中文"), this, &MainWindow::onActionChineseTriggered);
+
+    QDeviceWatcher *watcher = new QDeviceWatcher;
+    connect(watcher, SIGNAL(portChanged()), this, SLOT(deviceChanged()), Qt::ConnectionType::DirectConnection);
+    watcher->start();
+}
+
+void MainWindow::deviceChanged() {
+    refreshPorts();
 }
 
 MainWindow::~MainWindow()
@@ -86,10 +95,21 @@ MainWindow::~MainWindow()
 void MainWindow::refreshPorts()
 {
     QList<QSerialPortInfo> infos = QSerialPortInfo::availablePorts();
-    ui->comboPorts->clear();
-    for (QSerialPortInfo info : infos)
-        ui->comboPorts->addItem(info.portName());
 
+    // If the port currently in use is unplugged, we should close the connection.
+    bool found = false;
+    if (port->isOpen()) {
+        for (QSerialPortInfo info : infos) {
+            if (info.portName().compare(reinterpret_cast<QSerialPort *>(currentConnection)->portName()) == 0)
+                found = true;
+        }
+        if (!found)
+            openSerial();
+    }
+    ui->comboPorts->clear();
+    for (QSerialPortInfo info : infos) {
+        ui->comboPorts->addItem(info.portName());
+    }
 }
 
 void MainWindow::errorMessage(QString str)
