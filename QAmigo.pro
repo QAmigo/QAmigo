@@ -75,4 +75,10 @@ RESOURCES += \
 TRANSLATIONS = languages/Serial-Amigo_en.ts \
         languages/Serial-Amigo_zh.ts
 
+win32: LIBS += -L$$PWD/lib/QDevicewatcher/win32 -lQDeviceWatcherd2
+unix:!macx: LIBS += -L$$PWD/lib/QDevicewatcher/linux/ -lQDeviceWatcher
+
+INCLUDEPATH += $$PWD/lib/QDevicewatcher/include
+DEPENDPATH += $$PWD/lib/QDevicewatcher
+
 include($$PWD/scripts/Deployment.pri)
