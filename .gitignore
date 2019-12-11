@@ -1,0 +1,17 @@
+Distro/
+build/
+scripts/QIF/packages/QAmigo/data
+
+*~
+*.o
+*.exe
+*.user
+*.stash
+qrc_*.cpp
+moc_*.cpp
+moc_*.h
+
+ui_*.cpp
+ui_*.h
+
+Makefile

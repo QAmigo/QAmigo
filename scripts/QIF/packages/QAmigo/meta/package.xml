@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>QAmigo</DisplayName>
+    <Description>A QAmigo, Tool/Assistant for helping decoding and visualizing data from stream.</Description>
+    <Version>3.0</Version>
+    <ReleaseDate>2019-12-11</ReleaseDate>
+    <Default>true</Default>
+    <Script>installscript.qs</Script>
+</Package>

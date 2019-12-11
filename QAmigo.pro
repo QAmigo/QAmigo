@@ -11,6 +11,12 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = QAmigo
 TEMPLATE = app
 
+CONFIG(release, debug|release): {
+    DESTDIR="$$PWD/build/release"
+} else {
+    DESTDIR="$$PWD/build/debug"
+}
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -62,10 +68,6 @@ FORMS += \
         mainwindow.ui \
         src/AdvancedTab/textinput.ui
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
 
 DISTFILES +=
 
@@ -74,3 +76,5 @@ RESOURCES += \
 
 TRANSLATIONS = languages/Serial-Amigo_en.ts \
         languages/Serial-Amigo_zh.ts
+
+include($$PWD/scripts/Deployment.pri)
