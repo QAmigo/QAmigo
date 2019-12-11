@@ -74,3 +74,5 @@ RESOURCES += \
 
 TRANSLATIONS = languages/Serial-Amigo_en.ts \
         languages/Serial-Amigo_zh.ts
+
+include($$PWD/scripts/Deployment.pri)

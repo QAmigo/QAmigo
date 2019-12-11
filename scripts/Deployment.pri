@@ -10,7 +10,7 @@ contains(QMAKE_HOST.os, Linux):{
     DEPLOYER = cqtdeployer
 }
 
-sopprted_versions = 3.1 3.0 2.0
+sopprted_versions = 3.2 3.1 3.0 2.0
 for(val, sopprted_versions) {
 
     exists( $$QT_DIR/../../../Tools/QtInstallerFramework/$$val/bin/ ) {
@@ -36,18 +36,7 @@ mkpath( $$PWD/../Distro)
 win32:OUT_FILE = QAmigoInstaller.exe
 unix:OUT_FILE = QAmigoInstaller.run
 
-DEPLOY_TARGET = $$PWD/../build/release
-
-DATA_DIR = $$PWD/QIF/packages/QAmigo/data/
-META_DIR = $$PWD/QIF/packages/QAmigo/meta/
-
-win32:OUT_LIB= -libOut .
-win32:OUT_BIN= -binOut .
-
-BASE_DEPLOY_FLAGS = clear -qmake $$QMAKE_BIN -libDir $$PWD/../ -recursiveDepth 4 -ignoreEnv $$DEPLOY_TARGET
-BASE_DEPLOY_FLAGS_CQT = $$BASE_DEPLOY_FLAGS -targetDir $$DATA_DIR $$OUT_LIB $$OUT_BIN
-
-deploy_dep.commands += $$DEPLOYER -bin $$DEPLOY_TARGET $$BASE_DEPLOY_FLAGS_CQT
+deploy_dep.commands += $$DEPLOYER -qmake $$QMAKE_BIN -confFile $$PWD/deploy.json
 
 CONFIG_FILE = $$PWD/QIF/config/config.xml
 
