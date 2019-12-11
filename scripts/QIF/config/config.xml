@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>QAmigo</Name>
+    <Version>3.0</Version>
+    <Title>QAmigo</Title>
+    <Publisher>QAmigo</Publisher>
+    <!-- Directory name is used in component.xml -->
+    <StartMenuDir>QAmigo</StartMenuDir>
+    <TargetDir>@HomeDir@/QAmigo/</TargetDir>
+</Installer>

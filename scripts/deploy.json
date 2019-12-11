@@ -1,0 +1,8 @@
+{
+    "bin": "./../build/release/",
+    "clear": true,
+    "ignoreEnv": "./../build/release/",
+    "libDir": "./../",
+    "recursiveDepth": "4",
+    "targetDir": "./QIF/packages/QAmigo/data/"
+}
