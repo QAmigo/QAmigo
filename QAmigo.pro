@@ -17,6 +17,8 @@ TEMPLATE = app
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
+#DEFINES += HOT_PLUG
+
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -73,8 +75,14 @@ RESOURCES += \
 TRANSLATIONS = languages/Serial-Amigo_en.ts \
         languages/Serial-Amigo_zh.ts
 
-win32: LIBS += -L$$PWD/lib/QDevicewatcher/win32 -lQDeviceWatcherd2
-unix:!macx: LIBS += -L$$PWD/lib/QDevicewatcher/linux/ -lQDeviceWatcher
+contains(DEFINES, HOT_PLUG) {
+        message('Compiling with hotplug HotPlug Supported...')
 
-INCLUDEPATH += $$PWD/lib/QDevicewatcher/include
-DEPENDPATH += $$PWD/lib/QDevicewatcher
+        win32: LIBS += -L$$PWD/lib/QDevicewatcher/win32 -lQDeviceWatcherd2
+        unix:!macx: LIBS += -L$$PWD/lib/QDevicewatcher/linux/ -lQDeviceWatcher
+
+        INCLUDEPATH += $$PWD/lib/QDevicewatcher/include
+        DEPENDPATH += $$PWD/lib/QDevicewatcher
+} else {
+        message('Compiling without hotplug HotPlug Supported...')
+}
