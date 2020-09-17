@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -32,7 +32,9 @@ private:
 public slots:
     void errorMessage(QString str);
     void openSerial();
+#ifdef HOT_PLUG
     void deviceChanged();
+#endif
 
 private slots:
     void onButtonRefreshClicked();

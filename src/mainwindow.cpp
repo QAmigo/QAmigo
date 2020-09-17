@@ -1,6 +1,8 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "qdevicewatcher.h"
+#ifdef HOT_PLUG
+    #include "qdevicewatcher.h"
+#endif
 
 #include <QMessageBox>
 #include <QtSerialPort/QSerialPortInfo>
@@ -75,14 +77,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionEnglish, &QAction::triggered, this, &MainWindow::onActionEnglishTriggered);
     ui->menuLanguage->addAction(tr("简体中文"), this, &MainWindow::onActionChineseTriggered);
 
+#ifdef HOT_PLUG
     QDeviceWatcher *watcher = new QDeviceWatcher;
     connect(watcher, SIGNAL(portChanged()), this, SLOT(deviceChanged()), Qt::ConnectionType::DirectConnection);
     watcher->start();
+#endif
 }
 
+#ifdef HOT_PLUG
 void MainWindow::deviceChanged() {
     refreshPorts();
 }
+#endif
 
 MainWindow::~MainWindow()
 {
@@ -96,6 +102,7 @@ void MainWindow::refreshPorts()
 {
     QList<QSerialPortInfo> infos = QSerialPortInfo::availablePorts();
 
+#ifdef HOT_PLUG
     // If the port currently in use is unplugged, we should close the connection.
     bool found = false;
     if (port->isOpen()) {
@@ -106,6 +113,7 @@ void MainWindow::refreshPorts()
         if (!found)
             openSerial();
     }
+#endif
     ui->comboPorts->clear();
     for (QSerialPortInfo info : infos) {
         ui->comboPorts->addItem(info.portName());
