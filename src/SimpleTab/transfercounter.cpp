@@ -15,7 +15,7 @@ TransferCounter::TransferCounter(QWidget *parent, QString name) :
 void TransferCounter::add(int count)
 {
     countAll += static_cast<uint32_t>(count);
-    labelCount->setText(QString().sprintf("%d", countAll));
+    labelCount->setText(QString().asprintf("%d", countAll));
 }
 
 void TransferCounter::clear()

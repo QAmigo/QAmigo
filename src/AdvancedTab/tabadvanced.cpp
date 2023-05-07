@@ -37,7 +37,7 @@ TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     enabled(false),
     endianess(BIG),
     nameAllocator(new NameAllocator()),
-    validatorHeader(new QRegExpValidator(QRegExp("[0-9a-fA-F]{1,4}")))
+    validatorHeader(new QRegularExpressionValidator(QRegularExpression("[0-9a-fA-F]{1,4}")))
 {
     QVBoxLayout *layoutMain = new QVBoxLayout();
     setLayout(layoutMain);
@@ -121,9 +121,9 @@ TabAdvanced::~TabAdvanced()
 
 void TabAdvanced::frameDataReady(int id, QList<double> listValues)
 {
-    QString bufferShow = QString().sprintf("[%d] \t", id);
+    QString bufferShow = QString().asprintf("[%d] \t", id);
     for (int i = 0; i < listValues.count(); i++) {
-        bufferShow.append(QString().sprintf("%.2lf ", listValues.at(i)));
+        bufferShow.append(QString().asprintf("%.2lf ", listValues.at(i)));
         ProtocalDataItem *item = static_cast<ProtocalDataItem *>(model->item(id)->child(i));
         if (item->checkState() == Qt::CheckState::Checked) {
             if (enabled)
@@ -380,7 +380,7 @@ void TabAdvanced::onButtonLoadSettingsClicked()
         else
             radioBig->setChecked(true);
         for (int i = 0; i < object.keys().count() - 1; i++) {
-            QJsonObject frameObject = object[QString(i)].toObject();
+            QJsonObject frameObject = object[QString((short)i)].toObject();
             TextTranslator translator(frameObject["header"].toString());
             addHeader(translator.toHex());
             QJsonArray types = frameObject["types"].toArray();
@@ -430,7 +430,7 @@ void TabAdvanced::onButtonSaveSettingsClicked()
                 types.append(type);
             }
             frameObject["types"] = types;
-            object[QString(i)] = frameObject;
+            object[QString((short)i)] = frameObject;
         }
         object["endianess"] = endianess;
         QJsonDocument saveDoc(object);

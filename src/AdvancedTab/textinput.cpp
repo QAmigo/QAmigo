@@ -2,7 +2,7 @@
 #include "ui_textinput.h"
 
 #include <QPushButton>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QTimer>
 
 TextInput::TextInput(QWidget *parent, QString name, QString regexText) :
@@ -21,7 +21,7 @@ TextInput::TextInput(QWidget *parent, QString name, QString regexText) :
      * after the mousePressEvent.
      */
     if (regexText != "")
-        ui->lineEditName->setValidator(new QRegExpValidator(QRegExp(regexText)));
+        ui->lineEditName->setValidator(new QRegularExpressionValidator(QRegularExpression(regexText)));
     QTimer::singleShot(50, ui->lineEditName, &QLineEdit::selectAll);
     ui->lineEditName->setFocus();
 

@@ -23,25 +23,27 @@ Tool/Assistant for helping decoding and visualizing data from stream.
       - [3D Box](#3d-box)
   - [Language Support](#language-support)
   - [About](#about)
-- [中文说明](#%e4%b8%ad%e6%96%87%e8%af%b4%e6%98%8e)
-  - [安装](#%e5%ae%89%e8%a3%85)
-    - [下载](#%e4%b8%8b%e8%bd%bd)
-    - [编译](#%e7%bc%96%e8%af%91)
-  - [如何使用](#%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8)
-    - [简单收发](#%e7%ae%80%e5%8d%95%e6%94%b6%e5%8f%91)
-    - [高级解码](#%e9%ab%98%e7%ba%a7%e8%a7%a3%e7%a0%81)
-      - [示例：解析一个IMU的数据](#%e7%a4%ba%e4%be%8b%e8%a7%a3%e6%9e%90%e4%b8%80%e4%b8%aaimu%e7%9a%84%e6%95%b0%e6%8d%ae)
-    - [保存于读取协议配置](#%e4%bf%9d%e5%ad%98%e4%ba%8e%e8%af%bb%e5%8f%96%e5%8d%8f%e8%ae%ae%e9%85%8d%e7%bd%ae)
-  - [插件支持](#%e6%8f%92%e4%bb%b6%e6%94%af%e6%8c%81)
-    - [如何加载插件](#%e5%a6%82%e4%bd%95%e5%8a%a0%e8%bd%bd%e6%8f%92%e4%bb%b6)
-    - [如何编写插件](#%e5%a6%82%e4%bd%95%e7%bc%96%e5%86%99%e6%8f%92%e4%bb%b6)
-      - [接收解码好的数据](#%e6%8e%a5%e6%94%b6%e8%a7%a3%e7%a0%81%e5%a5%bd%e7%9a%84%e6%95%b0%e6%8d%ae)
-      - [发送自定义数据](#%e5%8f%91%e9%80%81%e8%87%aa%e5%ae%9a%e4%b9%89%e6%95%b0%e6%8d%ae)
-      - [设置tab的名字](#%e8%ae%be%e7%bd%aetab%e7%9a%84%e5%90%8d%e5%ad%97)
-    - [插件示例](#%e6%8f%92%e4%bb%b6%e7%a4%ba%e4%be%8b)
+- [中文说明](#中文说明)
+  - [安装](#安装)
+    - [下载](#下载)
+    - [编译](#编译)
+  - [如何使用](#如何使用)
+    - [简单收发](#简单收发)
+    - [高级解码](#高级解码)
+      - [示例：解析一个IMU的数据](#示例解析一个imu的数据)
+    - [保存于读取协议配置](#保存于读取协议配置)
+  - [插件支持](#插件支持)
+    - [如何加载插件](#如何加载插件)
+    - [如何编写插件](#如何编写插件)
+      - [接收解码好的数据](#接收解码好的数据)
+      - [发送自定义数据](#发送自定义数据)
+      - [设置tab的名字](#设置tab的名字)
+    - [插件示例](#插件示例)
       - [3D Box](#3d-box-1)
-  - [语言支持](#%e8%af%ad%e8%a8%80%e6%94%af%e6%8c%81)
-  - [关于](#%e5%85%b3%e4%ba%8e)
+  - [语言支持](#语言支持)
+  - [关于](#关于)
+- [Change Log](#change-log)
+  - [2023.5.8](#202358)
 
 This tool is meant for an assitant tool for users who want to visualize data comming from serial port or net socket(***hasn't been implemented***).
 
@@ -388,3 +390,10 @@ QString QAmigoTabPluginTemplate::getName() const
 ## 关于
 
 Linux版本的发布程序使用 [CQtDeployer](https://github.com/QuasarApp/CQtDeployer) 发布, 感谢作者的工作!
+
+# Change Log
+
+## 2023.5.8
+
+- Removed QDeviceWatcher.
+- Upgrade to Qt6.2.4.

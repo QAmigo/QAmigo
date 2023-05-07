@@ -4,9 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui serialport charts
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += serialport charts
 
 TARGET = QAmigo
 TEMPLATE = app

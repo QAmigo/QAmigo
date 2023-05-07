@@ -70,9 +70,9 @@ void TabCOMSimple::rawDataReady(const QByteArray &array)
         QString temp;
         for (char data : array.toHex()) {
             if (count % 2 == 1)
-                temp.append(QString().sprintf("%c ", data));
+                temp.append(QString().asprintf("%c ", data));
             else
-                temp.append(QString().sprintf("%c", data));
+                temp.append(QString().asprintf("%c", data));
             count++;
         }
         boxReceive->appendPlainText(buffer.append(temp));

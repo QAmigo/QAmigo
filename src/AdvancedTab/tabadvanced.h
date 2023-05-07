@@ -8,7 +8,7 @@
 #include <QGroupBox>
 #include <QPushButton>
 #include <QRadioButton>
-#include <QRegExpValidator>
+#include <QRegularExpressionValidator>
 #include <QTreeView>
 #include <QLineEdit>
 #include <QLabel>
@@ -91,7 +91,7 @@ private:
     ENDIANESS endianess;
 
     NameAllocator *nameAllocator;
-    QRegExpValidator *validatorHeader;
+    QRegularExpressionValidator *validatorHeader;
 
     bool allowRunning;
 
