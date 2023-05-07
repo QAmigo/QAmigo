@@ -207,13 +207,6 @@ There is an example plugin project [3D Box plugin](https://github.com/QAmigo/3DB
 
 This program supports I18N(internationalization) through Qt's I18N support, only supports English and Chinese, select the one you want in menubar.
 
-## Turning off HotPlug support
-
-HotPlug support provided by [QDeviceWacher](https://github.com/wang-bin/qdevicewatcher) has some compatibility issues. We can comment the line that
-adding HOT_PLUG to DEFINES in the .pro file out to disable it.
-
-NOTE: MUST REBUILD THE PROJECT TO MAKE CHANGES TO DEFINES WORK!
-
 ## About
 
 The linux version released package uses [CQtDeployer](https://github.com/QuasarApp/CQtDeployer) to deploy, thanks to the author's great work!
@@ -387,14 +380,6 @@ QString QAmigoTabPluginTemplate::getName() const
 #### 3D Box
 
 示例插件程序 [3D Box plugin](https://github.com/QAmigo/3DBox), 为大家展示了一个简单的插件是什么样的.
-
-## Turning off HotPlug support
-
-
-热拔插支持是由[QDeviceWacher](https://github.com/wang-bin/qdevicewatcher)提供的，但是现在有一些兼容性问题，这里提供了一个开关，可以通过
-注释掉.pro文件中给DEFINES增加HOT_PLUG的语句来关闭HotPlug功能.
-
-注意：DEFINES的更改必须在重新构建整个工程后才能生效！
 
 ## 语言支持
 

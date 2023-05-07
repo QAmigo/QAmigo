@@ -32,9 +32,6 @@ private:
 public slots:
     void errorMessage(QString str);
     void openSerial();
-#ifdef HOT_PLUG
-    void deviceChanged();
-#endif
 
 private slots:
     void onButtonRefreshClicked();
