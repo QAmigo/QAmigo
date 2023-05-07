@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QTimer>
 
 class TransferCounter : public QWidget
 {
@@ -20,13 +21,23 @@ public:
     void clear();
     void setLabelText(QString text);
 
+private slots:
+    void onCalcSpeed();
+
 public:
     QHBoxLayout *layout;
 
 private:
+    void inline updateLabel();
+
     QLabel *labelName;
     uint32_t countAll;
     QLabel *labelCount;
+
+    QTimer *timer;
+    uint32_t lastCount;
+    uint32_t speed;
+    uint32_t lastSpeed;
 };
 
 #endif // TRANSFERCOUNTER_H
