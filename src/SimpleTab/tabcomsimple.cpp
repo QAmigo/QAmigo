@@ -60,22 +60,12 @@ void TabCOMSimple::rawDataReady(const QByteArray &array)
      * append new line when we append new text and this is inevitable, so better use it
      * as a log system until we can implement a better append method.
      */
-    QString buffer = QTime().currentTime().toString("[hh:mm:ss.zzz]: ");
     counterRX->add(array.size());
-
+    boxReceive->appendPlainText(QTime().currentTime().toString("[hh:mm:ss.zzz]: "));
     if (radioReceiveASC->isChecked())
-        boxReceive->appendPlainText(buffer.append(array));
+        boxReceive->appendPlainText(array);
     else {
-        uint16_t count = 0;
-        QString temp;
-        for (char data : array.toHex()) {
-            if (count % 2 == 1)
-                temp.append(QString().asprintf("%c ", data));
-            else
-                temp.append(QString().asprintf("%c", data));
-            count++;
-        }
-        boxReceive->appendPlainText(buffer.append(temp));
+        boxReceive->appendPlainText(array.toHex());
     }
 }
 
