@@ -89,7 +89,7 @@ void TabCOMSimple::onButtonReceiveClearClicked()
 
 void TabCOMSimple::sendError(QString string)
 {
-    emit errorMessage(string);
+    emit log(string);
 }
 
 void TabCOMSimple::changeEvent(QEvent *event)

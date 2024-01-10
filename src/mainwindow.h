@@ -3,11 +3,10 @@
 
 #include <QMainWindow>
 #include <QWidget>
-#include <QtNetwork/QTcpSocket>
-#include <QtNetwork/QUdpSocket>
 
 #include "Connections/commdevice.h"
 #include "Connections/serialdevice.h"
+#include "Connections/netsocketdevice.h"
 #include "SimpleTab/sendbox.h"
 #include "SimpleTab/tabcomsimple.h"
 #include "tabplugininterface.h"
@@ -32,7 +31,7 @@ private:
     void retranslateUi();
 
 public slots:
-    void errorMessage(QString str);
+    void log(QString str);
 
 private slots:
     void onLoadPluginTriggered();
@@ -43,11 +42,18 @@ private slots:
     void onConnectionTypeChanged(bool isChecked);
     void openConnection();
 
+    void onDeviceConnected();
+    void onDeviceErrorDisconnected();
+
+private:
+    void closeDevice();
+
 private:
     Ui::MainWindow *ui;
 
     CommDevice *commDevice;
     SerialDevice *serialDevice;
+    NetSocketDevice *netSocketDevice;
     QIODevice *currentConnection;
 
     TabCOMSimple *tabCOMSimple;

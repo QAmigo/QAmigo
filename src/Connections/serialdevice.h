@@ -23,6 +23,7 @@ public:
 
 private slots:
     void refreshPorts();
+    void onErrorOccured();
 
 private:
     QComboBox *comboPorts;

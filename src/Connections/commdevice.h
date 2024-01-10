@@ -15,8 +15,10 @@ public:
     void setIODevice(QIODevice *ioDevice);
     virtual int open() = 0;
     virtual void close() = 0;
-signals:
 
+signals:
+    void connected();
+    void errorDisconnected();
 };
 
 #endif // COMMDEVICE_H

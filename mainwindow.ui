@@ -264,7 +264,7 @@
                <item row="0" column="1">
                 <widget class="QLineEdit" name="inputNetIPAddr">
                  <property name="text">
-                  <string>192.168.111.111</string>
+                  <string>127.0.0.1</string>
                  </property>
                 </widget>
                </item>
@@ -276,7 +276,11 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QLineEdit" name="inputNetPort"/>
+                <widget class="QLineEdit" name="inputNetPort">
+                 <property name="text">
+                  <string>1234</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -299,17 +303,7 @@
          </layout>
         </item>
         <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
+         <widget class="QTextBrowser" name="textLog"/>
         </item>
        </layout>
       </widget>

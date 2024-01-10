@@ -21,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     decoder = new Decoder(this, tabAdvanced->getListProtocals(), tabAdvanced->getEndianess());
 
     // [start] Data stream connections.
-    connect(tabCOMSimple, &TabCOMSimple::errorMessage, this, &MainWindow::errorMessage);
     connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
     connect(decoder, &Decoder::frameReady, tabAdvanced, &TabAdvanced::frameDataReady);
     // [End]
@@ -54,7 +53,20 @@ MainWindow::MainWindow(QWidget *parent) :
                                           ui->comboBaudrate, ui->comboDataBits,
                                           ui->comboParity, ui->comboStopBits,
                                           ui->comboFlowControl);
+    netSocketDevice = new NetSocketDevice(this, ui->inputNetIPAddr, ui->inputNetPort,
+                                          ui->radioNetTypeTCP, ui->radioNetTypeUDP,
+                                          ui->radioNetRoleClient, ui->radioNetRoleServer);
+    connect(serialDevice, &SerialDevice::connected, this, &MainWindow::onDeviceConnected);
+    connect(netSocketDevice, &SerialDevice::connected, this, &MainWindow::onDeviceConnected);
+    connect(serialDevice, &SerialDevice::errorDisconnected, this, &MainWindow::onDeviceErrorDisconnected);
+    connect(netSocketDevice, &SerialDevice::errorDisconnected, this, &MainWindow::onDeviceErrorDisconnected);
     commDevice = serialDevice;
+
+    // [start] Log stream connections.
+    connect(tabCOMSimple, &TabCOMSimple::log, this, &MainWindow::log);
+    connect(netSocketDevice, &NetSocketDevice::log, this, &MainWindow::log);
+    // [end]
+
 }
 
 MainWindow::~MainWindow()
@@ -73,32 +85,49 @@ void MainWindow::onConnectionTypeChanged(bool isChecked)
     } else if (ui->radioNetSocket->isChecked()) {
         ui->groupNetProperties->setEnabled(true);
         ui->groupSerialProperties->setDisabled(true);
+        commDevice = netSocketDevice;
     }
+}
+
+void MainWindow::closeDevice()
+{
+    commDevice->close();
+    ui->groupConnSel->setEnabled(true);
+    ui->buttonOpen->setText(tr("Open Connection"));
+    tabAdvanced->setAllowRunning(false);
 }
 
 void MainWindow::openConnection()
 {
     if (ui->groupConnSel->isEnabled()) {
+        // This acts like sending connect command, device will signals conncted if so.
         int ret = commDevice->open();
         if (ret != 0) {
             return;
         }
-        tabCOMSimple->bindIODevice(commDevice->ioDevice);
-        decoder->setConnection(commDevice->ioDevice);
-        ui->groupConnSel->setDisabled(true);
-        ui->buttonOpen->setText(tr("Close Connection"));
-        tabAdvanced->setAllowRunning(true);
     } else {
-        commDevice->close();
-        ui->groupConnSel->setEnabled(true);
-        ui->buttonOpen->setText(tr("Open Connection"));
-        tabAdvanced->setAllowRunning(false);
+        closeDevice();
     }
 }
 
-void MainWindow::errorMessage(QString str)
+// Only when device is really connected.
+void MainWindow::onDeviceConnected()
 {
-    QMessageBox::warning(this, tr("Error"), str);
+    tabCOMSimple->bindIODevice(commDevice->ioDevice);
+    decoder->setConnection(commDevice->ioDevice);
+    ui->groupConnSel->setDisabled(true);
+    ui->buttonOpen->setText(tr("Close Connection"));
+    tabAdvanced->setAllowRunning(true);
+}
+
+void MainWindow::onDeviceErrorDisconnected()
+{
+    closeDevice();
+}
+
+void MainWindow::log(QString str)
+{
+    ui->textLog->append(str);
 }
 
 void MainWindow::onLoadPluginTriggered()

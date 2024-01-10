@@ -24,7 +24,7 @@ private:
     void retranslateUi();
 
 signals:
-    void errorMessage(QString string);
+    void log(QString string);
 
 public slots:
     void rawDataReady(const QByteArray &array);

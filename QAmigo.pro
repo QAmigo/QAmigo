@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += serialport charts
+QT       += serialport network charts
 
 TARGET = QAmigo
 TEMPLATE = app
@@ -33,6 +33,7 @@ SOURCES += \
         src/AdvancedTab/textinput.cpp \
         src/AdvancedTab/vartype.cpp \
         src/Connections/commdevice.cpp \
+        src/Connections/netsocketdevice.cpp \
         src/Connections/serialdevice.cpp \
         src/mainwindow.cpp \
         src/main.cpp \
@@ -52,6 +53,7 @@ HEADERS += \
         src/AdvancedTab/textinput.h \
         src/AdvancedTab/vartype.h \
         src/Connections/commdevice.h \
+        src/Connections/netsocketdevice.h \
         src/Connections/serialdevice.h \
         src/mainwindow.h \
         src/SimpleTab/sendbox.h \

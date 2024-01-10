@@ -10,9 +10,6 @@
 #include <QSpacerItem>
 #include <QStandardItemModel>
 
-#include <sstream>
-#include <iostream>
-
 TabAdvanced::TabAdvanced(QWidget *parent) : QWidget(parent),
     buttonEnable(new QPushButton(tr("Enable"))),
     buttonLoad(new QPushButton(tr("Load Settings"))),

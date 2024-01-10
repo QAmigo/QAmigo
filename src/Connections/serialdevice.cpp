@@ -57,6 +57,7 @@ SerialDevice::SerialDevice(QObject *parent,
     setIODevice(port);
 
     connect(buttonRefresh, &QPushButton::clicked, this, &SerialDevice::refreshPorts);
+    connect(port, &QSerialPort::errorOccurred, this, &SerialDevice::onErrorOccured);
 }
 
 SerialDevice::~SerialDevice()
@@ -171,6 +172,7 @@ int SerialDevice::open()
         qDebug("port open failed");
         return -EIO;
     }
+    emit connected();
     return 0;
 }
 
@@ -179,3 +181,7 @@ void SerialDevice::close()
     port->close();
 }
 
+void SerialDevice::onErrorOccured()
+{
+    emit errorDisconnected();
+}
