@@ -1,51 +1,18 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 #include <QMessageBox>
-#include <QtSerialPort/QSerialPortInfo>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    port(new QSerialPort()),
     listPlugins(QList<TabPluginInterface *>()),
     translator(new QTranslator())
 {
     ui->setupUi(this);
 
-    refreshPorts();
-
-    ui->comboBaudrate->addItem("1200");
-    ui->comboBaudrate->addItem("2400");
-    ui->comboBaudrate->addItem("4800");
-    ui->comboBaudrate->addItem("9600");
-    ui->comboBaudrate->addItem("115200");
-    ui->comboBaudrate->setCurrentIndex(4);
-
-    ui->comboDataBits->addItem("5", 5);
-    ui->comboDataBits->addItem("6", 6);
-    ui->comboDataBits->addItem("7", 7);
-    ui->comboDataBits->addItem("8", 8);
-    ui->comboDataBits->setCurrentIndex(3);
-
-    ui->comboParity->addItem(tr("NoParity"),	0);
-    ui->comboParity->addItem(tr("EvenParity"),	2);
-    ui->comboParity->addItem(tr("OldParity"),	3);
-    ui->comboParity->addItem(tr("SpaceParity"),	4);
-    ui->comboParity->addItem(tr("MarkParity"),	5);
-    ui->comboParity->setCurrentIndex(0);
-
-    ui->comboStopBits->addItem("1",   1);
-    ui->comboStopBits->addItem("2",   2);
-    ui->comboStopBits->addItem("1.5", 3);
-    ui->comboStopBits->setCurrentIndex(0);
-
-    ui->comboFlowControl->addItem(tr("No"), 0);
-    ui->comboFlowControl->addItem(tr("Hard"), 1);
-    ui->comboFlowControl->addItem(tr("Soft"), 2);
-    ui->comboFlowControl->setCurrentIndex(0);
-
-    tabCOMSimple = new TabCOMSimple(this, port);
+    tabCOMSimple = new TabCOMSimple(this);
     ui->tabMain->addTab(tabCOMSimple, tr("Simple"));
 
     tabAdvanced = new TabAdvanced(this);
@@ -53,12 +20,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     decoder = new Decoder(this, tabAdvanced->getListProtocals(), tabAdvanced->getEndianess());
 
-    connect(ui->buttonOpen, &QPushButton::clicked, this, &MainWindow::openSerial);
-
+    // [start] Data stream connections.
     connect(tabCOMSimple, &TabCOMSimple::errorMessage, this, &MainWindow::errorMessage);
     connect(decoder, &Decoder::rawDataReady, tabCOMSimple, &TabCOMSimple::rawDataReady);
     connect(decoder, &Decoder::frameReady, tabAdvanced, &TabAdvanced::frameDataReady);
-    connect(ui->buttonRefreshPorts, &QPushButton::clicked, this, &MainWindow::onButtonRefreshClicked);
+    // [End]
+
+    // [Start] Plugins
     connect(ui->actionLoad_Plugin, &QAction::triggered, this, &MainWindow::onLoadPluginTriggered);
     connect(decoder, &Decoder::frameReady, this, &MainWindow::onDecodedDataReady);
 
@@ -70,145 +38,67 @@ MainWindow::MainWindow(QWidget *parent) :
     QFileInfo pluginsFolder(folderString);
     if (!pluginsFolder.exists())
         QDir().mkdir(folderString);
+    // [End]
 
+    // [Start] i18n
     connect(ui->actionEnglish, &QAction::triggered, this, &MainWindow::onActionEnglishTriggered);
     ui->menuLanguage->addAction(tr("简体中文"), this, &MainWindow::onActionChineseTriggered);
+    // [End]
+
+    ui->groupNetProperties->setDisabled(true);
+    connect(ui->radioSerial, &QRadioButton::clicked, this, &MainWindow::onConnectionTypeChanged);
+    connect(ui->radioNetSocket, &QRadioButton::clicked, this, &MainWindow::onConnectionTypeChanged);
+    connect(ui->buttonOpen, &QPushButton::clicked, this, &MainWindow::openConnection);
+
+    serialDevice = new SerialDevice(this, ui->comboPorts, ui->buttonRefreshPorts,
+                                          ui->comboBaudrate, ui->comboDataBits,
+                                          ui->comboParity, ui->comboStopBits,
+                                          ui->comboFlowControl);
+    commDevice = serialDevice;
 }
 
 MainWindow::~MainWindow()
 {
-    if (port->isOpen())
-        port->close();
-    delete port;
     delete ui;
 }
 
-void MainWindow::refreshPorts()
+void MainWindow::onConnectionTypeChanged(bool isChecked)
 {
-    QList<QSerialPortInfo> infos = QSerialPortInfo::availablePorts();
+    Q_UNUSED(isChecked)
 
-    ui->comboPorts->clear();
-    for (QSerialPortInfo info : infos) {
-        ui->comboPorts->addItem(info.portName());
+    if (ui->radioSerial->isChecked()) {
+        ui->groupNetProperties->setDisabled(true);
+        ui->groupSerialProperties->setEnabled(true);
+        commDevice = serialDevice;
+    } else if (ui->radioNetSocket->isChecked()) {
+        ui->groupNetProperties->setEnabled(true);
+        ui->groupSerialProperties->setDisabled(true);
+    }
+}
+
+void MainWindow::openConnection()
+{
+    if (ui->groupConnSel->isEnabled()) {
+        int ret = commDevice->open();
+        if (ret != 0) {
+            return;
+        }
+        tabCOMSimple->bindIODevice(commDevice->ioDevice);
+        decoder->setConnection(commDevice->ioDevice);
+        ui->groupConnSel->setDisabled(true);
+        ui->buttonOpen->setText(tr("Close Connection"));
+        tabAdvanced->setAllowRunning(true);
+    } else {
+        commDevice->close();
+        ui->groupConnSel->setEnabled(true);
+        ui->buttonOpen->setText(tr("Open Connection"));
+        tabAdvanced->setAllowRunning(false);
     }
 }
 
 void MainWindow::errorMessage(QString str)
 {
     QMessageBox::warning(this, tr("Error"), str);
-}
-
-void MainWindow::openSerial()
-{
-    if (ui->comboPorts->currentText() != "") {
-        if (port->isOpen()) {
-            port->close();
-            ui->buttonOpen->setText(tr("Open"));
-            tabAdvanced->setAllowRunning(false);
-        } else {
-            port->setPortName(ui->comboPorts->currentText());
-            bool ok;
-            qint32 baudrate = ui->comboBaudrate->currentText().toInt(&ok);
-            if (ok)
-                port->setBaudRate(baudrate);
-            else {
-                QMessageBox::warning(this, tr("Error"), tr("Baudrate parse failed"));
-                return;
-            }
-
-            QSerialPort::DataBits dataBits = QSerialPort::Data8;
-            switch(ui->comboDataBits->currentData().toInt()) {
-            case 5:
-                dataBits = QSerialPort::Data5;
-                break;
-            case 6:
-                dataBits = QSerialPort::Data6;
-                break;
-            case 7:
-            dataBits = QSerialPort::Data7;
-            break;
-            case 8:
-                dataBits = QSerialPort::Data8;
-                break;
-            default:
-                qCritical("BUG: undefined serial databits.");
-                break;
-            }
-            port->setDataBits(dataBits);
-
-            QSerialPort::Parity parity = QSerialPort::NoParity;
-            switch (ui->comboParity->currentData().toInt()) {
-            case 0:
-                parity = QSerialPort::NoParity;
-                break;
-            case 2:
-                parity = QSerialPort::EvenParity;
-                break;
-            case 3:
-                parity = QSerialPort::OddParity;
-                break;
-            case 4:
-                parity = QSerialPort::SpaceParity;
-                break;
-            case 5:
-                parity = QSerialPort::MarkParity;
-                break;
-            default:
-                qCritical("BUG: undefined serial parity.");
-                break;
-            }
-            port->setParity(parity);
-
-            QSerialPort::StopBits stopBits = QSerialPort::OneStop;
-            switch (ui->comboStopBits->currentData().toInt()) {
-            case 1:
-                stopBits = QSerialPort::OneStop;
-                break;
-            case 2:
-                stopBits = QSerialPort::TwoStop;
-                break;
-            case 3:
-                stopBits = QSerialPort::OneAndHalfStop;
-                break;
-            default:
-                qCritical("BUG: undefined serial stopits.");
-                break;
-            }
-            port->setStopBits(stopBits);
-
-            QSerialPort::FlowControl flowControl = QSerialPort::NoFlowControl;
-            switch (ui->comboFlowControl->currentData().toInt()) {
-            case 0:
-                flowControl = QSerialPort::NoFlowControl;
-                break;
-            case 1:
-                flowControl = QSerialPort::HardwareControl;
-                break;
-            case 2:
-                flowControl = QSerialPort::SoftwareControl;
-                break;
-            default:
-                qCritical("BUG: undefined serial Flow Control Type.");
-                break;
-            }
-            port->setFlowControl(flowControl);
-
-            if (!port->open(QIODevice::ReadWrite)) {
-                QMessageBox::warning(this, tr("Serial open Failed"), tr("Port open Failed"));
-                return;
-            }
-            ui->buttonOpen->setText(tr("Close"));
-
-            decoder->setConnection(port);
-            tabAdvanced->setAllowRunning(true);
-            currentConnection = port;
-        }
-    }
-}
-
-void MainWindow::onButtonRefreshClicked()
-{
-    refreshPorts();
 }
 
 void MainWindow::onLoadPluginTriggered()
@@ -298,5 +188,5 @@ void MainWindow::changeEvent(QEvent *event)
 void MainWindow::updatePluginConnection()
 {
     for (auto plugin : listPlugins)
-        plugin->setConnection(currentConnection);
+        plugin->setConnection(commDevice->ioDevice);
 }

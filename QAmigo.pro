@@ -32,9 +32,11 @@ SOURCES += \
         src/AdvancedTab/nameallocator.cpp \
         src/AdvancedTab/textinput.cpp \
         src/AdvancedTab/vartype.cpp \
+        src/Connections/commdevice.cpp \
+        src/Connections/serialdevice.cpp \
         src/mainwindow.cpp \
         src/main.cpp \
-        src/SimpleTab/serialsendbox.cpp \
+        src/SimpleTab/sendbox.cpp \
         src/SimpleTab/tabcomsimple.cpp \
         src/SimpleTab/transfercounter.cpp \
         src/AdvancedTab/texttranslator.cpp
@@ -49,8 +51,10 @@ HEADERS += \
         src/AdvancedTab/tabadvanced.h \
         src/AdvancedTab/textinput.h \
         src/AdvancedTab/vartype.h \
+        src/Connections/commdevice.h \
+        src/Connections/serialdevice.h \
         src/mainwindow.h \
-        src/SimpleTab/serialsendbox.h \
+        src/SimpleTab/sendbox.h \
         src/SimpleTab/tabcomsimple.h \
         src/SimpleTab/transfercounter.h \
         src/AdvancedTab/texttranslator.h \

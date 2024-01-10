@@ -1,5 +1,5 @@
-﻿#ifndef SERIALSENDBOX_H
-#define SERIALSENDBOX_H
+﻿#ifndef SENDBOX_H
+#define SENDBOX_H
 
 #include <QBasicTimer>
 #include <QCheckBox>
@@ -11,15 +11,16 @@
 #include <QRadioButton>
 #include <QGroupBox>
 #include <QSerialPort>
-#include <array>
 
-class SerialSendBox : public QWidget
+class SendBox : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SerialSendBox(QWidget *parent = nullptr, QSerialPort *port = nullptr);
+    explicit SendBox(QWidget *parent);
     // Is this because I overrided timerEvent so a default destructor is generated?
-    ~SerialSendBox() override;
+    ~SendBox() override;
+
+    void bindIODevice(QIODevice *ioDevice);
 
 signals:
     void errorSend(QString string);
@@ -42,7 +43,7 @@ private:
     QRadioButton *radioASC;
     QGroupBox *groupTranslateType;
     QPlainTextEdit *boxSend;
-    QSerialPort *port;
+    QIODevice *ioDevice;
     QCheckBox *checkTimer;
     QLabel *labelTimer;
     QSpinBox *spinTimer;
@@ -58,4 +59,4 @@ protected:
     void changeEvent(QEvent *event) override;
 };
 
-#endif // SERIALSENDBOX_H
+#endif // SENDBOX_H

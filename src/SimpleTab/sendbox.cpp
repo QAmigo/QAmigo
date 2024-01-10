@@ -1,4 +1,4 @@
-﻿#include "serialsendbox.h"
+﻿#include "sendbox.h"
 
 #include <QCoreApplication>
 #include <QHBoxLayout>
@@ -7,12 +7,11 @@
 #include <QVBoxLayout>
 #include <QMessageBox>
 
-SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(parent),
+SendBox::SendBox(QWidget *parent) : QWidget(parent),
     buttonSend(new QPushButton(tr("Send"), this)),
     radioHex(new QRadioButton(tr("Hex"), this)),
     radioASC(new QRadioButton(tr("ASC"), this)),
     boxSend(new QPlainTextEdit(this)),
-    port(port),
     checkTimer(new QCheckBox()),
     labelTimer(new QLabel(tr("Repeat Send Every"))),
     spinTimer(new QSpinBox()),
@@ -40,19 +39,24 @@ SerialSendBox::SerialSendBox(QWidget *parent, QSerialPort *port) : QWidget(paren
     layout->addLayout(layoutControls);
     setLayout(layout);
 
-    connect(buttonSend, &QPushButton::clicked, this, &SerialSendBox::on_buttonSend_clicked);
-    connect(radioASC, &QRadioButton::clicked, this, &SerialSendBox::onCheckBoxChanged);
-    connect(radioHex, &QRadioButton::clicked, this, &SerialSendBox::onCheckBoxChanged);
-    connect(checkTimer, &QCheckBox::stateChanged, this, &SerialSendBox::onCheckTimerStateChanged);
-    connect(spinTimer, QOverload<int>::of(&QSpinBox::valueChanged), this, &SerialSendBox::onSpinTimerValueChanged);
+    connect(buttonSend, &QPushButton::clicked, this, &SendBox::on_buttonSend_clicked);
+    connect(radioASC, &QRadioButton::clicked, this, &SendBox::onCheckBoxChanged);
+    connect(radioHex, &QRadioButton::clicked, this, &SendBox::onCheckBoxChanged);
+    connect(checkTimer, &QCheckBox::stateChanged, this, &SendBox::onCheckTimerStateChanged);
+    connect(spinTimer, QOverload<int>::of(&QSpinBox::valueChanged), this, &SendBox::onSpinTimerValueChanged);
 }
 
-SerialSendBox::~SerialSendBox()
+SendBox::~SendBox()
 {
     delete timer;
 }
 
-int8_t SerialSendBox::toHex(char data)
+void SendBox::bindIODevice(QIODevice *ioDevice)
+{
+    this->ioDevice = ioDevice;
+}
+
+int8_t SendBox::toHex(char data)
 {
     if (data <= '9' && data >= '0')
         return data - '0';
@@ -62,7 +66,7 @@ int8_t SerialSendBox::toHex(char data)
     return -1;
 }
 
-char SerialSendBox::parseHex(QByteArray *array)
+char SendBox::parseHex(QByteArray *array)
 {
     if (array->size() >= 2) {
         QByteArray hexArray = array->left(2);
@@ -78,12 +82,14 @@ char SerialSendBox::parseHex(QByteArray *array)
     return 0;
 }
 
-void SerialSendBox::on_buttonSend_clicked()
+void SendBox::on_buttonSend_clicked()
 {
-    if (port->isOpen()) {
+    if (!ioDevice)
+        return;
+    if (ioDevice->isOpen()) {
         if (radioASC->isChecked()) {
             QString text = boxSend->toPlainText();
-            port->write(text.toUtf8());
+            ioDevice->write(text.toUtf8());
             emit addSendCount(text.count());
         } else {
             QByteArray bufferSend;
@@ -93,19 +99,19 @@ void SerialSendBox::on_buttonSend_clicked()
                 bufferSend.append(hex);
             }
             if (bufferSend.size() != 0) {
-                port->write(bufferSend);
+                ioDevice->write(bufferSend);
                 emit addSendCount(bufferSend.count());
             }
         }
     }
 }
 
-void SerialSendBox::onCheckBoxChanged()
+void SendBox::onCheckBoxChanged()
 {
     boxSend->setPlainText("");
 }
 
-void SerialSendBox::onCheckTimerStateChanged()
+void SendBox::onCheckTimerStateChanged()
 {
     if (checkTimer->checkState() == Qt::CheckState::Checked)
         timer->start(spinTimer->value(), this);
@@ -113,7 +119,7 @@ void SerialSendBox::onCheckTimerStateChanged()
         timer->stop();
 }
 
-void SerialSendBox::onSpinTimerValueChanged(int i)
+void SendBox::onSpinTimerValueChanged(int i)
 {
     /*
      * If value of spinbox is edited when repeat sending ebaled,
@@ -125,7 +131,7 @@ void SerialSendBox::onSpinTimerValueChanged(int i)
     }
 }
 
-void SerialSendBox::timerEvent(QTimerEvent *event)
+void SendBox::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == timer->timerId())
         on_buttonSend_clicked();
@@ -133,18 +139,18 @@ void SerialSendBox::timerEvent(QTimerEvent *event)
         QWidget::timerEvent(event);
 }
 
-void SerialSendBox::changeEvent(QEvent *event)
+void SendBox::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange)
         retranslateUi();
     QWidget::changeEvent(event);
 }
 
-void SerialSendBox::retranslateUi()
+void SendBox::retranslateUi()
 {
-    buttonSend->setText(QCoreApplication::translate("SerialSendBox", "Send"));
-    radioHex->setText(QCoreApplication::translate("SerialSendBox", "Hex"));
-    radioASC->setText(QCoreApplication::translate("SerialSendBox", "ASC"));
-    labelTimer->setText(QCoreApplication::translate("SerialSendBox", "Repeat Send Every"));
-    labelMs->setText(QCoreApplication::translate("SerialSendBox", "ms"));
+    buttonSend->setText(QCoreApplication::translate("SendBox", "Send"));
+    radioHex->setText(QCoreApplication::translate("SendBox", "Hex"));
+    radioASC->setText(QCoreApplication::translate("SendBox", "ASC"));
+    labelTimer->setText(QCoreApplication::translate("SendBox", "Repeat Send Every"));
+    labelMs->setText(QCoreApplication::translate("SendBox", "ms"));
 }

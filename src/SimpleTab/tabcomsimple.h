@@ -9,14 +9,16 @@
 #include <QLabel>
 
 #include "transfercounter.h"
+#include "sendbox.h"
 
 class TabCOMSimple : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TabCOMSimple(QWidget *parent = nullptr,
-                          QSerialPort *port = nullptr);
-    ~TabCOMSimple();
+    explicit TabCOMSimple(QWidget *parent);
+    ~TabCOMSimple() override;
+
+    void bindIODevice(QIODevice *ioDevice);
 
 private:
     void retranslateUi();
@@ -39,10 +41,11 @@ private:
     QPushButton *buttonReceiveClear;
     TransferCounter *counterRX;
     TransferCounter *counterTX;
+    QVector<SendBox *> sendBoxes;
 
     // QWidget interface
 protected:
-    void changeEvent(QEvent *event);
+    void changeEvent(QEvent *event) override;
 };
 
 #endif // TABCOMSIMPLE_H

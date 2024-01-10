@@ -1,19 +1,19 @@
-﻿#include "serialsendbox.h"
-#include "tabcomsimple.h"
+﻿#include "tabcomsimple.h"
 
 #include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QTime>
 
-TabCOMSimple::TabCOMSimple(QWidget *parent,
-                           QSerialPort *port) : QWidget(parent),
+#define CNT_SEND_BOX	5
+
+TabCOMSimple::TabCOMSimple(QWidget *parent) : QWidget(parent),
     boxReceive(new QPlainTextEdit()),
     radioReceiveHex(new QRadioButton(tr("Hex"))),
     radioReceiveASC(new QRadioButton(tr("ASC"))),
     buttonReceiveClear(new QPushButton(tr("Clear All"))),
-    counterRX(new TransferCounter(parent, tr("RX"))),
-    counterTX(new TransferCounter(parent, tr("TX")))
+    counterRX(new TransferCounter(this, tr("RX"))),
+    counterTX(new TransferCounter(this, tr("TX")))
 {
     radioReceiveASC->setChecked(true);
 
@@ -36,11 +36,12 @@ TabCOMSimple::TabCOMSimple(QWidget *parent,
 
     layoutReceiveControls->addWidget(buttonReceiveClear);
 
-    for (int i = 0; i < 5; i++) {
-        SerialSendBox *box = new SerialSendBox(this, port);
+    for (int i = 0; i < CNT_SEND_BOX; i++) {
+        SendBox *box = new SendBox(this);
         layoutSend->addWidget(box);
-        connect(box, &SerialSendBox::errorSend, this, &TabCOMSimple::sendError);
-        connect(box, &SerialSendBox::addSendCount, this, &TabCOMSimple::addTXCount);
+        connect(box, &SendBox::errorSend, this, &TabCOMSimple::sendError);
+        connect(box, &SendBox::addSendCount, this, &TabCOMSimple::addTXCount);
+        sendBoxes.append(box);
     }
 
     connect(buttonReceiveClear, &QPushButton::clicked, this, &TabCOMSimple::onButtonReceiveClearClicked);
@@ -48,8 +49,13 @@ TabCOMSimple::TabCOMSimple(QWidget *parent,
 
 TabCOMSimple::~TabCOMSimple()
 {
-    delete counterRX;
-    delete counterTX;
+}
+
+void TabCOMSimple::bindIODevice(QIODevice *ioDevice)
+{
+    foreach (SendBox *box, sendBoxes) {
+        box->bindIODevice(ioDevice);
+    }
 }
 
 void TabCOMSimple::rawDataReady(const QByteArray &array)

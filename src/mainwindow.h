@@ -2,10 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QSerialPort>
 #include <QWidget>
+#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QUdpSocket>
 
-#include "SimpleTab/serialsendbox.h"
+#include "Connections/commdevice.h"
+#include "Connections/serialdevice.h"
+#include "SimpleTab/sendbox.h"
 #include "SimpleTab/tabcomsimple.h"
 #include "tabplugininterface.h"
 #include "AdvancedTab/tabadvanced.h"
@@ -21,33 +24,36 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
 private:
-    void refreshPorts();
     void updatePluginConnection();
     void translateTo(QString locale);
     void retranslateUi();
 
 public slots:
     void errorMessage(QString str);
-    void openSerial();
 
 private slots:
-    void onButtonRefreshClicked();
     void onLoadPluginTriggered();
     void onDecodedDataReady(int id, QList<double> listValues);
     void onActionEnglishTriggered();
     void onActionChineseTriggered();
 
+    void onConnectionTypeChanged(bool isChecked);
+    void openConnection();
+
 private:
     Ui::MainWindow *ui;
-    SerialSendBox *sendBox;
+
+    CommDevice *commDevice;
+    SerialDevice *serialDevice;
     QIODevice *currentConnection;
-    QSerialPort *port;
+
     TabCOMSimple *tabCOMSimple;
     TabAdvanced *tabAdvanced;
     Decoder *decoder;
+
     QList<TabPluginInterface *> listPlugins;
     QTranslator *translator;
 
