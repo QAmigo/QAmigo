@@ -182,7 +182,9 @@ int SerialDevice::open()
 
 void SerialDevice::close()
 {
-    port->close();
+    if (port->isOpen()) {
+        port->close();
+    }
 }
 
 void SerialDevice::onErrorOccured()
