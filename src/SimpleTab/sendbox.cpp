@@ -20,10 +20,10 @@ SendBox::SendBox(QWidget *parent) : QWidget(parent),
 {
     radioASC->setChecked(true);
 
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(boxSend);
 
-    QHBoxLayout *layoutControls = new QHBoxLayout(this);
+    QHBoxLayout *layoutControls = new QHBoxLayout();
     layoutControls->addWidget(radioASC);
     layoutControls->addWidget(radioHex);
     layoutControls->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));

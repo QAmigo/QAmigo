@@ -17,15 +17,16 @@ TabCOMSimple::TabCOMSimple(QWidget *parent) : QWidget(parent),
 {
     radioReceiveASC->setChecked(true);
 
-    QHBoxLayout *layoutMain = new QHBoxLayout(this);
-    QVBoxLayout *layoutReceive = new QVBoxLayout(this);
-    QVBoxLayout *layoutSend = new QVBoxLayout(this);
+    QHBoxLayout *layoutMain = new QHBoxLayout();
+    setLayout(layoutMain);
+    QVBoxLayout *layoutReceive = new QVBoxLayout();
+    QVBoxLayout *layoutSend = new QVBoxLayout();
 
     layoutMain->addLayout(layoutReceive);
     layoutMain->addLayout(layoutSend);
 
     layoutReceive->addWidget(boxReceive);
-    QHBoxLayout *layoutReceiveControls = new QHBoxLayout(this);
+    QHBoxLayout *layoutReceiveControls = new QHBoxLayout();
     layoutReceive->addLayout(layoutReceiveControls);
 
     layoutReceiveControls->addWidget(radioReceiveASC);
