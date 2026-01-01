@@ -72,7 +72,11 @@ void SerialDevice::refreshPorts()
 
     comboPorts->clear();
     foreach (QSerialPortInfo info, infos) {
+#ifdef Q_OS_LINUX
+        comboPorts->addItem(QString("/dev/").append(info.portName()));
+#else
         comboPorts->addItem(info.portName());
+#endif
     }
 }
 
